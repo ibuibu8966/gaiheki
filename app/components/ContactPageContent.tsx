@@ -23,7 +23,6 @@ const ContactPageContent = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Contact form submitted:", formData);
-    // ここで実際の送信処理を行う
   };
 
   return (

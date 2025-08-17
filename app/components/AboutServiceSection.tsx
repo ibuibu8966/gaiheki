@@ -1,6 +1,6 @@
 const AboutServiceSection = () => {
   return (
-    <section className="bg-blue-600 text-white py-16 px-4">
+    <section className="bg-orange-600 text-white py-16 px-4">
       <div className="max-w-7xl mx-auto">
         {/* タイトル */}
         <div className="text-center mb-12">
@@ -16,8 +16,8 @@ const AboutServiceSection = () => {
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           {/* お客様カード */}
           <div className="bg-white bg-opacity-90 text-gray-800 rounded-lg p-6 text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
               </svg>
             </div>
@@ -28,7 +28,7 @@ const AboutServiceSection = () => {
 
           {/* 外壁塗装の窓口カード */}
           <div className="bg-white bg-opacity-90 text-gray-800 rounded-lg p-6 text-center relative">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-700 text-white text-xs px-3 py-1 rounded-full">
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-700 text-white text-xs px-3 py-1 rounded-full">
               外壁塗装の窓口
             </div>
             <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 mt-4">
@@ -60,8 +60,8 @@ const AboutServiceSection = () => {
 
           {/* 認定パートナー業者カード */}
           <div className="bg-white bg-opacity-90 text-gray-800 rounded-lg p-6 text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>

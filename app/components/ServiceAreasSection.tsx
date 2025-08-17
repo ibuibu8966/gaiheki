@@ -9,7 +9,7 @@ const ServiceAreasSection = () => {
   ];
 
   return (
-    <section className="bg-white py-16 px-4">
+    <section id="service-areas" className="bg-white py-16 px-4">
       <div className="max-w-7xl mx-auto">
         {/* タイトル */}
         <div className="text-center mb-12">

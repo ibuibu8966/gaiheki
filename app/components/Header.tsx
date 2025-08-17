@@ -14,7 +14,7 @@ const Header = () => {
     const baseClass = "px-2 py-2 text-sm font-medium transition-colors";
     const activeClass = "text-orange-500 border-b-2 border-orange-500";
     const inactiveClass = "text-gray-700 hover:text-orange-500";
-    
+
     return `${baseClass} ${isActive(path) ? activeClass : inactiveClass}`;
   };
 
@@ -28,10 +28,10 @@ const Header = () => {
               <h1 className="text-xl font-bold text-orange-500 cursor-pointer">外壁塗装の窓口</h1>
             </Link>
           </div>
-          
+
           {/* ナビゲーションメニュー */}
           <nav className="hidden md:flex items-center space-x-6 whitespace-nowrap">
-            <Link href="/stores" className={getLinkClass('/stores')}>
+            <Link href="/#service-areas" className={getLinkClass('/#service-areas')}>
               施工店舗一覧
             </Link>
             <Link href="/columns" className={getLinkClass('/columns')}>
@@ -44,16 +44,16 @@ const Header = () => {
               加盟店様はこちら（登録）
             </Link>
             <div className="flex items-center space-x-2">
-              <Link href="/admin-login" className="text-gray-700 hover:text-orange-500 text-sm">
+              <Link href="/auth/admin-login" className="text-gray-700 hover:text-orange-500 text-sm">
                 管理者
               </Link>
               <span className="text-gray-400">/</span>
-              <Link href="/partner-login" className="text-gray-700 hover:text-orange-500 text-sm">
+              <Link href="/auth/partner-login" className="text-gray-700 hover:text-orange-500 text-sm">
                 加盟店様
               </Link>
             </div>
           </nav>
-          
+
           {/* 電話番号と相談ボタン */}
           <div className="hidden lg:flex items-center space-x-4">
             <div className="text-right">
@@ -71,7 +71,7 @@ const Header = () => {
               今すぐ相談する
             </button>
           </div>
-          
+
           {/* モバイルメニューボタン */}
           <div className="md:hidden">
             <button className="text-gray-700 hover:text-orange-500">
