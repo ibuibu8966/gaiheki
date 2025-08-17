@@ -2,8 +2,6 @@ import PartnerRegistrationPageContent from "../components/PartnerRegistrationPag
 
 export default function PartnerRegistrationPage() {
   return (
-    <div className="min-h-screen">
-      <PartnerRegistrationPageContent />
-    </div>
+    <PartnerRegistrationPageContent />
   );
 }

@@ -10,7 +10,7 @@ export default function ConditionalLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  
+
   // Routes that should not have header/footer
   const adminRoutes = ['/admin-dashboard', '/partner-dashboard', '/admin-login', '/partner-login'];
   const shouldHideHeaderFooter = adminRoutes.some(route => pathname.startsWith(route));
@@ -22,7 +22,7 @@ export default function ConditionalLayout({
   return (
     <>
       <Header />
-      <main className="pt-16">
+      <main>
         {children}
       </main>
       <Footer />
