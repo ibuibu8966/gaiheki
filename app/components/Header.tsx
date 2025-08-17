@@ -31,7 +31,7 @@ const Header = () => {
           
           {/* ナビゲーションメニュー */}
           <nav className="hidden md:flex items-center space-x-6 whitespace-nowrap">
-            <Link href="/stores" className={getLinkClass('/stores')}>
+            <Link href="/#service-areas" className={getLinkClass('/#service-areas')}>
               施工店舗一覧
             </Link>
             <Link href="/columns" className={getLinkClass('/columns')}>
