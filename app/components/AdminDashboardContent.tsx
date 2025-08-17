@@ -84,8 +84,16 @@ const AdminDashboardContent = () => {
     { id: 14, companyName: "林塗装店", representative: "林四郎", address: "宮崎県宮崎市橘通14-14-14", phone: "0985-456-7890", email: "hayashi@tosou.miyazaki.jp", website: "サイト", status: "承認" }
   ]);
 
-  const handleLogout = () => {
-    router.push("/admin-login");
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', {
+        method: 'POST',
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      router.push("/auth/admin-login");
+    }
   };
 
   const handlePartnerStatusChange = (partnerId: number, newStatus: string) => {

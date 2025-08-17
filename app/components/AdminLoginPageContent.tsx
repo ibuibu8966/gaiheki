@@ -6,10 +6,12 @@ import Link from "next/link";
 
 const AdminLoginPageContent = () => {
   const [loginData, setLoginData] = useState({
-    adminId: "",
+    username: "",
     password: ""
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,23 +22,37 @@ const AdminLoginPageContent = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // デモ用ログイン認証
-    if (loginData.adminId === "admin" && loginData.password === "admin123") {
-      // 管理画面へリダイレクト
-      router.push("/admin-dashboard");
-    } else {
-      alert("ログイン情報が正しくありません。");
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: loginData.username,
+          password: loginData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        router.push("/admin-dashboard");
+      } else {
+        setError(data.error || 'ログインに失敗しました');
+      }
+    } catch {
+      setError('ネットワークエラーが発生しました');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleDemoLogin = () => {
-    setLoginData({
-      adminId: "admin",
-      password: "admin123"
-    });
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -48,26 +64,33 @@ const AdminLoginPageContent = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          
+
           <h1 className="text-3xl font-bold text-gray-800 mb-2">管理者ログイン</h1>
-          <p className="text-gray-600">管理者IDとパスワードでログインしてください</p>
+          <p className="text-gray-600">ユーザー名とパスワードでログインしてください</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-8">
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-200 text-red-700 rounded-md">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* 管理者ID */}
+            {/* ユーザー名 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                管理者ID
+                ユーザー名
               </label>
               <input
                 type="text"
-                name="adminId"
-                value={loginData.adminId}
+                name="username"
+                value={loginData.username}
                 onChange={handleInputChange}
-                placeholder="管理者IDを入力"
+                placeholder="ユーザー名を入力"
                 className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -85,6 +108,7 @@ const AdminLoginPageContent = () => {
                   placeholder="パスワードを入力"
                   className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10"
                   required
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -102,26 +126,14 @@ const AdminLoginPageContent = () => {
               </div>
             </div>
 
-            {/* デモ用ログイン情報 */}
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-              <h3 className="font-medium text-blue-800 mb-2">デモ用ログイン情報:</h3>
-              <p className="text-sm text-blue-700">ID: admin</p>
-              <p className="text-sm text-blue-700">パスワード: admin123</p>
-              <button
-                type="button"
-                onClick={handleDemoLogin}
-                className="text-xs text-blue-600 hover:text-blue-800 underline mt-1"
-              >
-                デモ情報を入力
-              </button>
-            </div>
 
             {/* ログインボタン */}
             <button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-md transition-colors"
+              disabled={isLoading}
+              className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white font-bold py-3 px-4 rounded-md transition-colors"
             >
-              ログイン
+              {isLoading ? 'ログイン中...' : 'ログイン'}
             </button>
 
             {/* または */}
