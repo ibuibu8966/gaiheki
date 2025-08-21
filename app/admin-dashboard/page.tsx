@@ -1,5 +1,14 @@
-import AdminDashboardContent from "../components/AdminDashboardContent";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AdminDashboardPage() {
-  return <AdminDashboardContent />;
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/admin-dashboard/partners");
+  }, [router]);
+
+  return null;
 }
