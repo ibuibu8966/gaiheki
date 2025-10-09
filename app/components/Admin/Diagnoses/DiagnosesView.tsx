@@ -1,38 +1,131 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-interface Diagnosis {
-  id: string;
-  customerName: string;
-  age: string;
-  issue: string;
-  workType: string;
-  requestDate: string;
-  status: string;
-  isUrgent: boolean;
+interface Quotation {
+  id: number;
+  partnerId: number;
+  partnerName: string;
+  amount: number;
+  appealText: string | null;
+  isSelected: boolean;
+  isLowest: boolean;
 }
 
-const DiagnosesView = () => {
-  const [diagnosisFilter, setDiagnosisFilter] = useState("すべて");
+interface Diagnosis {
+  id: number;
+  diagnosisNumber: string;
+  customerId: number;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  address: string;
+  prefecture: string;
+  floorArea: string;
+  currentSituation: string;
+  constructionType: string;
+  status: string;
+  statusLabel: string;
+  quotationCount: number;
+  quotations: Quotation[];
+  createdAt: string;
+}
 
-  const [diagnoses] = useState<Diagnosis[]>([
-    { id: "GH-00001", customerName: "高橋太", age: "101～150平米 (31～45坪)", issue: "劣化が少し気になる", workType: "外壁全面の塗装", requestDate: "2024年03月01日", status: "見積もり完了", isUrgent: false },
-    { id: "GH-00002", customerName: "田中陽", age: "51～100平米 (16～30坪)", issue: "色褪せや汚れが気になる", workType: "屋根の塗装", requestDate: "2024年02月28日", status: "見積もり完了", isUrgent: false },
-    { id: "GH-00003", customerName: "鈴木賢", age: "151～200平米 (46～61坪)", issue: "色褪せや汚れが気になる", workType: "外壁の塗装", requestDate: "2024年02月25日", status: "対応中", isUrgent: false },
-    { id: "GH-00004", customerName: "千葉真", age: "201～250平米 (61～76坪)", issue: "ひび割れや破損したところがある", workType: "補修・防水", requestDate: "2024年02月20日", status: "対応中", isUrgent: false },
-    { id: "GH-00005", customerName: "東京悟", age: "～50平米 (15坪) 以下", issue: "工事中心", workType: "外壁の塗り替え（サイディング）", requestDate: "2024年02月18日", status: "見積もり完了", isUrgent: false },
-    { id: "GH-00006", customerName: "大阪昭", age: "251～300平米 (76～91坪)", issue: "工事をも考えた", workType: "屋根の塗り替え（屋根替え）", requestDate: "2024年02月10日", status: "見積もり完了", isUrgent: false },
-    { id: "GH-00007", customerName: "横浜慎", age: "301～350平米 (91～106坪)", issue: "劣化が少し気になる", workType: "全面の塗り替え", requestDate: "2024年02月05日", status: "対応中", isUrgent: false },
-    { id: "GH-00008", customerName: "名古屋真", age: "351～400平米 (106～121坪)", issue: "色褪せや汚れが気になる", workType: "外壁塗装", requestDate: "2024年01月30日", status: "見積もり完了", isUrgent: false },
-    { id: "GH-00009", customerName: "神戸賢", age: "401～450平米 (121～136坪)", issue: "ひび割れや破損したところがある", workType: "屋根の塗装", requestDate: "2024年01月25日", status: "見積もり完了", isUrgent: false },
-    { id: "GH-00010", customerName: "京都健", age: "451～500平米 (136～151坪)", issue: "工事中心", workType: "外壁全面の塗装", requestDate: "2024年01月20日", status: "対応中", isUrgent: false },
-    { id: "GH-00011", customerName: "北海道太", age: "501平米 (152坪) 以上", issue: "色褪せや汚れが気になる", workType: "外壁の塗装", requestDate: "2024年01月18日", status: "見積もり対応完了", isUrgent: true },
-    { id: "GH-00012", customerName: "青森賢", age: "わからない", issue: "劣化が少し気になる", workType: "屋根の塗装", requestDate: "2024年01月15日", status: "見積もり対応完了", isUrgent: true },
-    { id: "GH-00013", customerName: "岩手健", age: "101～150平米 (31～45坪)", issue: "色褪せや汚れが気になる", workType: "外壁の塗装", requestDate: "2024年01月05日", status: "見積もり対応完了", isUrgent: true },
-    { id: "GH-00014", customerName: "秋田真", age: "151～200平米 (46～61坪)", issue: "ひび割れや破損したところがある", workType: "外壁の塗り替え（サイディング）", requestDate: "2023年12月30日", status: "見積もり対応完了", isUrgent: true },
-    { id: "GH-00015", customerName: "山形昭", age: "201～250平米 (61～76坪)", issue: "工事中心", workType: "屋根の塗り替え（屋根替え）", requestDate: "2023年12月25日", status: "見積もり完了", isUrgent: false }
-  ]);
+// ラベル変換用マッピング
+const FLOOR_AREA_LABELS: Record<string, string> = {
+  UNDER_80: '80㎡未満',
+  FROM_80_TO_100: '80〜100㎡',
+  FROM_101_TO_120: '101〜120㎡',
+  FROM_121_TO_140: '121〜140㎡',
+  FROM_141_TO_160: '141〜160㎡',
+  FROM_161_TO_180: '161〜180㎡',
+  FROM_181_TO_200: '181〜200㎡',
+  FROM_201_TO_250: '201〜250㎡',
+  FROM_251_TO_300: '251〜300㎡',
+  OVER_300: '300㎡以上'
+};
+
+const CURRENT_SITUATION_LABELS: Record<string, string> = {
+  MARKET_RESEARCH: '相場を知りたい',
+  COMPARING_CONTRACTORS: '業者を比較したい',
+  CONSIDERING_CONSTRUCTION: '工事を検討中',
+  READY_TO_ORDER: 'すぐに発注したい'
+};
+
+const CONSTRUCTION_TYPE_LABELS: Record<string, string> = {
+  EXTERIOR_PAINTING: '外壁塗装',
+  ROOF_PAINTING: '屋根塗装',
+  EXTERIOR_AND_ROOF: '外壁・屋根塗装',
+  SIDING_REPLACEMENT: 'サイディング張替',
+  WATERPROOFING: '防水工事',
+  PARTIAL_REPAIR: '部分補修'
+};
+
+const DiagnosesView = () => {
+  const [diagnosisFilter, setDiagnosisFilter] = useState("all");
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedDiagnosis, setSelectedDiagnosis] = useState<Diagnosis | null>(null);
+  const [showQuotationModal, setShowQuotationModal] = useState(false);
+
+  // データ取得
+  useEffect(() => {
+    fetchDiagnoses();
+  }, [diagnosisFilter]);
+
+  const fetchDiagnoses = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (diagnosisFilter !== 'all') {
+        params.append('status', diagnosisFilter);
+      }
+
+      const response = await fetch(`/api/admin/diagnoses?${params}`);
+      const result = await response.json();
+
+      if (result.success) {
+        setDiagnoses(result.data);
+      }
+    } catch (error) {
+      console.error('診断案件取得エラー:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 業者決定処理
+  const handleDecidePartner = async (diagnosisId: number, quotationId: number) => {
+    if (!confirm('この業者に決定しますか？')) return;
+
+    try {
+      const response = await fetch(`/api/admin/diagnoses/${diagnosisId}/decide`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ quotationId }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('業者を決定しました');
+        setShowQuotationModal(false);
+        fetchDiagnoses();
+      } else {
+        alert('業者決定に失敗しました: ' + result.error);
+      }
+    } catch (error) {
+      console.error('業者決定エラー:', error);
+      alert('業者決定に失敗しました');
+    }
+  };
+
+  const openQuotationModal = (diagnosis: Diagnosis) => {
+    setSelectedDiagnosis(diagnosis);
+    setShowQuotationModal(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -44,17 +137,23 @@ const DiagnosesView = () => {
         {/* ステータスフィルタータブ */}
         <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
           <div className="flex space-x-2">
-            {["すべて", "業者選定", "見積もり対応中", "見積もり対応完了", "見積もり完了"].map((filter) => (
+            {[
+              { value: "all", label: "すべて" },
+              { value: "DESIGNATED", label: "業者指定" },
+              { value: "RECRUITING", label: "見積もり募集中" },
+              { value: "COMPARING", label: "見積もり比較中" },
+              { value: "DECIDED", label: "業者決定" },
+            ].map((filter) => (
               <button
-                key={filter}
-                onClick={() => setDiagnosisFilter(filter)}
+                key={filter.value}
+                onClick={() => setDiagnosisFilter(filter.value)}
                 className={`px-4 py-2 rounded-md text-sm font-medium ${
-                  diagnosisFilter === filter
+                  diagnosisFilter === filter.value
                     ? "bg-gray-800 text-white"
                     : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
                 }`}
               >
-                {filter}
+                {filter.label}
               </button>
             ))}
           </div>
@@ -72,56 +171,183 @@ const DiagnosesView = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">工事箇所</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">診断依頼日</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ステータス</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">詳細</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">見積もり詳細</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {diagnoses.filter(diagnosis => {
-                return diagnosisFilter === "すべて" || diagnosis.status === diagnosisFilter;
-              }).map((diagnosis) => (
-                <tr key={diagnosis.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {diagnosis.id}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {diagnosis.customerName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {diagnosis.age}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {diagnosis.issue}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {diagnosis.workType}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {diagnosis.requestDate}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-3 py-1 text-xs font-medium rounded-md ${
-                      diagnosis.status === "業者選定" ? "bg-blue-100 text-blue-800" :
-                      diagnosis.status === "見積もり対応中" || diagnosis.status === "対応中" ? "bg-yellow-100 text-yellow-800" :
-                      diagnosis.status === "見積もり対応完了" ? "bg-yellow-100 text-yellow-800" :
-                      diagnosis.status.includes("見積もり完了") ? "bg-green-100 text-green-800" :
-                      "bg-gray-100 text-gray-800"
-                    }`}>
-                      {diagnosis.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-blue-600 hover:text-blue-900">詳細</button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-blue-600 hover:text-blue-900">見積もり詳細</button>
+              {loading ? (
+                <tr>
+                  <td colSpan={8} className="px-6 py-4 text-center text-gray-500">
+                    読み込み中...
                   </td>
                 </tr>
-              ))}
+              ) : diagnoses.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-6 py-4 text-center text-gray-500">
+                    データがありません
+                  </td>
+                </tr>
+              ) : (
+                diagnoses.map((diagnosis) => (
+                  <tr key={diagnosis.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {diagnosis.diagnosisNumber}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {diagnosis.customerName}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {FLOOR_AREA_LABELS[diagnosis.floorArea] || diagnosis.floorArea}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {CURRENT_SITUATION_LABELS[diagnosis.currentSituation] || diagnosis.currentSituation}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {CONSTRUCTION_TYPE_LABELS[diagnosis.constructionType] || diagnosis.constructionType}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {diagnosis.createdAt}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-3 py-1 text-xs font-medium rounded-md ${
+                        diagnosis.status === "DESIGNATED" ? "bg-blue-100 text-blue-800" :
+                        diagnosis.status === "RECRUITING" ? "bg-yellow-100 text-yellow-800" :
+                        diagnosis.status === "COMPARING" ? "bg-purple-100 text-purple-800" :
+                        diagnosis.status === "DECIDED" ? "bg-green-100 text-green-800" :
+                        "bg-gray-100 text-gray-800"
+                      }`}>
+                        {diagnosis.statusLabel} ({diagnosis.quotationCount})
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => openQuotationModal(diagnosis)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        詳細を見る
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* 見積もり詳細モーダル */}
+      {showQuotationModal && selectedDiagnosis && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+              <h3 className="text-xl font-bold text-gray-900">
+                見積もり詳細 - {selectedDiagnosis.diagnosisNumber}
+              </h3>
+              <button
+                onClick={() => setShowQuotationModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="px-6 py-4">
+              <div className="mb-6">
+                <h4 className="font-semibold text-gray-900 mb-2">顧客情報</h4>
+                <div className="bg-gray-50 p-4 rounded-md space-y-2">
+                  <p><span className="font-medium">氏名:</span> {selectedDiagnosis.customerName}</p>
+                  <p><span className="font-medium">メール:</span> {selectedDiagnosis.customerEmail}</p>
+                  <p><span className="font-medium">電話:</span> {selectedDiagnosis.customerPhone}</p>
+                  <p><span className="font-medium">住所:</span> {selectedDiagnosis.address}</p>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <h4 className="font-semibold text-gray-900 mb-2">診断情報</h4>
+                <div className="bg-gray-50 p-4 rounded-md space-y-2">
+                  <p><span className="font-medium">都道府県:</span> {selectedDiagnosis.prefecture}</p>
+                  <p><span className="font-medium">延床面積:</span> {FLOOR_AREA_LABELS[selectedDiagnosis.floorArea] || selectedDiagnosis.floorArea}</p>
+                  <p><span className="font-medium">現在の状況:</span> {CURRENT_SITUATION_LABELS[selectedDiagnosis.currentSituation] || selectedDiagnosis.currentSituation}</p>
+                  <p><span className="font-medium">工事箇所:</span> {CONSTRUCTION_TYPE_LABELS[selectedDiagnosis.constructionType] || selectedDiagnosis.constructionType}</p>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-4">
+                  見積もり一覧 ({selectedDiagnosis.quotationCount}件)
+                </h4>
+
+                {selectedDiagnosis.quotationCount === 0 ? (
+                  <p className="text-gray-500 text-center py-8">見積もりがまだありません</p>
+                ) : (
+                  <div className="space-y-4">
+                    {selectedDiagnosis.quotations.map((quotation) => (
+                      <div
+                        key={quotation.id}
+                        className={`border rounded-lg p-4 ${
+                          quotation.isSelected
+                            ? 'border-green-500 bg-green-50'
+                            : 'border-gray-200'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <h5 className="font-semibold text-gray-900">
+                              {quotation.partnerName}
+                            </h5>
+                            <p className="text-2xl font-bold text-blue-600 mt-2">
+                              ¥{quotation.amount.toLocaleString()}
+                              {quotation.isLowest && (
+                                <span className="ml-2 text-sm font-normal text-red-600">
+                                  最安値
+                                </span>
+                              )}
+                            </p>
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            {quotation.isSelected ? (
+                              <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-md">
+                                決定済み
+                              </span>
+                            ) : selectedDiagnosis.status !== 'DECIDED' ? (
+                              <button
+                                onClick={() =>
+                                  handleDecidePartner(selectedDiagnosis.id, quotation.id)
+                                }
+                                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
+                              >
+                                この業者に決定
+                              </button>
+                            ) : null}
+                          </div>
+                        </div>
+
+                        {quotation.appealText && (
+                          <div className="mt-3 p-3 bg-gray-50 rounded-md">
+                            <p className="text-sm text-gray-700 font-medium mb-1">
+                              アピール文
+                            </p>
+                            <p className="text-sm text-gray-600">{quotation.appealText}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-gray-200 flex justify-end">
+              <button
+                onClick={() => setShowQuotationModal(false)}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,40 +1,237 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import PartnerFormModal from "./PartnerFormModal";
+import PartnerDetailModal from "./PartnerDetailModal";
 
 interface Partner {
   id: number;
   companyName: string;
   email: string;
   phone: string;
-  prefecture: string;
+  address: string;
+  prefectures: string[];
   status: string;
+  isActive: boolean;
   registrationDate: string;
+  customerCount: number;
+  quotationCount: number;
 }
+
+const PREFECTURE_NAMES: Record<string, string> = {
+  Hokkaido: '北海道', Tokyo: '東京都', Kanagawa: '神奈川県',
+  Saitama: '埼玉県', Chiba: '千葉県', Osaka: '大阪府', Hyogo: '兵庫県', Kyoto: '京都府'
+};
 
 const PartnersView = () => {
   const [partnerFilter, setPartnerFilter] = useState("すべて");
   const [partnerSearch, setPartnerSearch] = useState("");
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const [partners, setPartners] = useState<Partner[]>([
-    { id: 1, companyName: "株式会社山田塗装", email: "info@yamada-tosou.co.jp", phone: "03-1234-5678", prefecture: "東京都", status: "表示", registrationDate: "2024年01月15日" },
-    { id: 2, companyName: "田中建装株式会社", email: "contact@tanaka-kensou.com", phone: "06-9876-5432", prefecture: "大阪府", status: "表示", registrationDate: "2024年01月20日" },
-    { id: 3, companyName: "佐藤塗装工業", email: "info@sato-tosou.jp", phone: "045-1111-2222", prefecture: "神奈川県", status: "表示", registrationDate: "2024年01月25日" },
-    { id: 4, companyName: "鈴木リフォーム", email: "suzuki@reform.co.jp", phone: "043-3333-4444", prefecture: "千葉県", status: "表示", registrationDate: "2024年02月01日" },
-    { id: 5, companyName: "高橋塗装店", email: "takahashi@paint.com", phone: "048-5555-6666", prefecture: "埼玉県", status: "表示", registrationDate: "2024年02月05日" },
-    { id: 6, companyName: "伊藤建設", email: "ito@kensetsu.jp", phone: "052-7777-8888", prefecture: "愛知県", status: "表示", registrationDate: "2024年02月10日" },
-    { id: 7, companyName: "渡辺塗装", email: "watanabe@tosou.net", phone: "022-9999-0000", prefecture: "宮城県", status: "表示", registrationDate: "2024年02月15日" },
-    { id: 8, companyName: "中村ペイント", email: "nakamura@paint.org", phone: "092-1111-2222", prefecture: "福岡県", status: "表示", registrationDate: "2024年02月20日" },
-    { id: 9, companyName: "小林工務店", email: "kobayashi@koumuten.com", phone: "076-3333-4444", prefecture: "石川県", status: "表示", registrationDate: "2024年02月25日" },
-    { id: 10, companyName: "加藤塗装工業", email: "kato@tosou-kogyo.jp", phone: "054-5555-6666", prefecture: "静岡県", status: "表示", registrationDate: "2024年03月01日" },
-    { id: 11, companyName: "松本建装", email: "matsumoto@kensou.co.jp", phone: "026-7777-8888", prefecture: "長野県", status: "非表示", registrationDate: "2024年03月05日" },
-    { id: 12, companyName: "井上塗装", email: "inoue@paint.ne.jp", phone: "087-9999-0000", prefecture: "香川県", status: "非表示", registrationDate: "2024年03月10日" }
-  ]);
+  // モーダル状態
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [editingPartner, setEditingPartner] = useState<any>(null);
+  const [selectedPartnerId, setSelectedPartnerId] = useState<number | null>(null);
 
-  const handlePartnerStatusChange = (partnerId: number, newStatus: string) => {
-    setPartners(partners.map(partner => 
-      partner.id === partnerId ? { ...partner, status: newStatus } : partner
-    ));
+  useEffect(() => {
+    fetchPartners();
+  }, [partnerFilter, partnerSearch]);
+
+  // 申請承認からの遷移を処理
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('openForm') === 'true') {
+      const pendingApplication = sessionStorage.getItem('pendingPartnerApplication');
+      if (pendingApplication) {
+        try {
+          const applicationData = JSON.parse(pendingApplication);
+
+          // フォームデータをセット
+          setEditingPartner({
+            applicationId: applicationData.applicationId,
+            username: '', // 新規登録なので空
+            loginEmail: applicationData.email,
+            companyName: applicationData.companyName,
+            phone: applicationData.phone,
+            address: applicationData.address,
+            representativeName: applicationData.representativeName,
+            websiteUrl: applicationData.websiteUrl,
+            businessDescription: applicationData.businessDescription,
+            appealText: applicationData.selfPr,
+            prefectures: applicationData.prefectures
+          });
+
+          setIsFormModalOpen(true);
+
+          // セッションストレージをクリア
+          sessionStorage.removeItem('pendingPartnerApplication');
+
+          // URLパラメータをクリア
+          window.history.replaceState({}, '', '/admin-dashboard/partners');
+        } catch (error) {
+          console.error('Failed to load application data:', error);
+        }
+      }
+    }
+  }, []);
+
+  const fetchPartners = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+
+      if (partnerFilter === "表示") params.append('status', 'active');
+      if (partnerFilter === "非表示") params.append('status', 'inactive');
+      if (partnerSearch) params.append('search', partnerSearch);
+
+      const response = await fetch(`/api/admin/partners?${params}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setPartners(data.data);
+        setError(null);
+      } else {
+        setError(data.error || '加盟店の取得に失敗しました');
+      }
+    } catch (err) {
+      setError('加盟店の取得に失敗しました');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePartnerStatusChange = async (partnerId: number, newStatus: string) => {
+    try {
+      const isActive = newStatus === "表示";
+
+      const response = await fetch('/api/admin/partners', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ partnerId, isActive })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setPartners(partners.map(partner =>
+          partner.id === partnerId ? { ...partner, status: newStatus, isActive } : partner
+        ));
+      } else {
+        alert(data.error || 'ステータス更新に失敗しました');
+      }
+    } catch (err) {
+      console.error('Status update error:', err);
+      alert('ステータス更新に失敗しました');
+    }
+  };
+
+  const handleCreatePartner = async (formData: any) => {
+    try {
+      const response = await fetch('/api/admin/partners', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // 申請からの登録の場合、申請ステータスを承認に更新
+        if (editingPartner?.applicationId) {
+          try {
+            await fetch('/api/admin/applications', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                applicationId: editingPartner.applicationId,
+                status: 'APPROVED',
+                reviewedBy: 1 // TODO: 実際のログインユーザーIDを使用
+              })
+            });
+          } catch (err) {
+            console.error('Failed to update application status:', err);
+          }
+        }
+
+        alert(data.message || '加盟店を登録しました');
+        fetchPartners();
+        setIsFormModalOpen(false);
+        setEditingPartner(null);
+      } else {
+        alert(data.error || '加盟店の登録に失敗しました');
+      }
+    } catch (err) {
+      console.error('Create error:', err);
+      alert('加盟店の登録に失敗しました');
+    }
+  };
+
+  const handleUpdatePartner = async (formData: any) => {
+    try {
+      const response = await fetch('/api/admin/partners', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ partnerId: editingPartner.id, ...formData })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(data.message || '加盟店情報を更新しました');
+        fetchPartners();
+        setIsFormModalOpen(false);
+        setEditingPartner(null);
+      } else {
+        alert(data.error || '加盟店の更新に失敗しました');
+      }
+    } catch (err) {
+      console.error('Update error:', err);
+      alert('加盟店の更新に失敗しました');
+    }
+  };
+
+  const handleDeletePartner = async (partnerId: number, companyName: string) => {
+    if (!confirm(`本当に「${companyName}」を削除しますか？この操作は取り消せません。`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/partners?id=${partnerId}`, {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(data.message || '加盟店を削除しました');
+        fetchPartners();
+      } else {
+        alert(data.error || '加盟店の削除に失敗しました');
+      }
+    } catch (err) {
+      console.error('Delete error:', err);
+      alert('加盟店の削除に失敗しました');
+    }
+  };
+
+  const openDetailModal = (partnerId: number) => {
+    setSelectedPartnerId(partnerId);
+    setIsDetailModalOpen(true);
+  };
+
+  const openCreateModal = () => {
+    setEditingPartner(null);
+    setIsFormModalOpen(true);
+  };
+
+  const openEditModal = (partner: any) => {
+    setEditingPartner(partner);
+    setIsDetailModalOpen(false);
+    setIsFormModalOpen(true);
   };
 
   return (
@@ -43,12 +240,15 @@ const PartnersView = () => {
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900">加盟店管理</h2>
         </div>
-        
+
         {/* ツールバー */}
         <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <button className="bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-medium">
+              <button
+                onClick={openCreateModal}
+                className="bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-700"
+              >
                 新規追加
               </button>
               <select
@@ -65,7 +265,7 @@ const PartnersView = () => {
                   type="text"
                   value={partnerSearch}
                   onChange={(e) => setPartnerSearch(e.target.value)}
-                  placeholder="検索..."
+                  placeholder="会社名、メールアドレスで検索..."
                   className="pl-3 pr-10 py-2 border border-gray-300 rounded-md text-sm w-64"
                 />
                 <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,7 +274,7 @@ const PartnersView = () => {
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-blue-500">20</div>
+              <div className="text-2xl font-bold text-blue-500">{partners.length}</div>
               <div className="text-sm text-gray-500">登録加盟店数</div>
             </div>
           </div>
@@ -82,26 +282,40 @@ const PartnersView = () => {
 
         {/* テーブル */}
         <div className="overflow-x-auto">
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+              <p className="mt-2 text-sm text-gray-500">読み込み中...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-500">{error}</p>
+              <button
+                onClick={fetchPartners}
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              >
+                再読み込み
+              </button>
+            </div>
+          ) : partners.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">加盟店が見つかりません</p>
+            </div>
+          ) : (
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">会社名</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">メールアドレス</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">電話番号</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">都道府県</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">対応都道府県</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ステータス</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">作成日</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">詳細</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {partners.filter(partner => {
-                const matchesFilter = partnerFilter === "すべて" || partner.status === partnerFilter;
-                const matchesSearch = partner.companyName.toLowerCase().includes(partnerSearch.toLowerCase()) ||
-                                    partner.email.toLowerCase().includes(partnerSearch.toLowerCase());
-                return matchesFilter && matchesSearch;
-              }).map((partner) => (
+              {partners.map((partner) => (
                 <tr key={partner.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {partner.companyName}
@@ -112,16 +326,27 @@ const PartnersView = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {partner.phone}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {partner.prefecture}
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    <div className="flex flex-wrap gap-1">
+                      {partner.prefectures.slice(0, 2).map((pref, idx) => (
+                        <span key={idx} className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
+                          {PREFECTURE_NAMES[pref] || pref}
+                        </span>
+                      ))}
+                      {partner.prefectures.length > 2 && (
+                        <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">
+                          +{partner.prefectures.length - 2}
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <select 
+                    <select
                       value={partner.status}
                       onChange={(e) => handlePartnerStatusChange(partner.id, e.target.value)}
                       className={`px-3 py-1 text-xs font-medium rounded-md border-0 ${
-                        partner.status === "表示" 
-                          ? "bg-green-100 text-green-800" 
+                        partner.status === "表示"
+                          ? "bg-green-100 text-green-800"
                           : "bg-gray-100 text-gray-800"
                       }`}
                     >
@@ -132,11 +357,23 @@ const PartnersView = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {partner.registrationDate}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button className="text-blue-600 hover:text-blue-900 text-sm">詳細</button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openDetailModal(partner.id);
+                      }}
+                      className="text-blue-600 hover:text-blue-900 font-medium"
+                    >
+                      詳細
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeletePartner(partner.id, partner.companyName);
+                      }}
+                      className="text-red-600 hover:text-red-900 font-medium"
+                    >
                       削除
                     </button>
                   </td>
@@ -144,8 +381,30 @@ const PartnersView = () => {
               ))}
             </tbody>
           </table>
+          )}
         </div>
       </div>
+
+      {/* モーダル */}
+      <PartnerFormModal
+        isOpen={isFormModalOpen}
+        onClose={() => {
+          setIsFormModalOpen(false);
+          setEditingPartner(null);
+        }}
+        onSubmit={editingPartner ? handleUpdatePartner : handleCreatePartner}
+        partner={editingPartner}
+      />
+
+      <PartnerDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => {
+          setIsDetailModalOpen(false);
+          setSelectedPartnerId(null);
+        }}
+        partnerId={selectedPartnerId}
+        onEdit={openEditModal}
+      />
     </div>
   );
 };

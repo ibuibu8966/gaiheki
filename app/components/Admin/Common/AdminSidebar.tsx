@@ -84,14 +84,14 @@ const AdminSidebar = () => {
   ];
 
   return (
-    <aside className="w-64 min-w-64 bg-white shadow-sm flex-shrink-0">
+    <aside className="w-64 min-w-64 bg-white shadow-sm flex-shrink-0 h-screen sticky top-0 flex flex-col">
       {/* サイドバーヘッダー */}
       <div className="p-6 border-b border-gray-200">
         <h1 className="text-xl font-bold text-gray-800">管理ダッシュボード</h1>
       </div>
 
       {/* メニューリスト */}
-      <nav className="p-4">
+      <nav className="p-4 flex-1 overflow-y-auto">
         <ul className="space-y-2">
           {menuItems.map((item) => (
             <li key={item.id}>
@@ -112,7 +112,7 @@ const AdminSidebar = () => {
       </nav>
 
       {/* トップ画面・ログアウトボタン */}
-      <div className="absolute bottom-0 w-64 p-4 border-t border-gray-200 space-y-2">
+      <div className="p-4 border-t border-gray-200 space-y-2">
         <button
           onClick={() => router.push("/")}
           className="w-full flex items-center px-4 py-3 text-left rounded-md transition-colors text-gray-700 hover:bg-gray-50"
