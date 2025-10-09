@@ -66,7 +66,7 @@ const PartnerDetailModal = ({ isOpen, onClose, partnerId, onEdit }: PartnerDetai
           <h3 className="text-xl font-bold text-gray-900">加盟店詳細</h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-900"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -78,7 +78,7 @@ const PartnerDetailModal = ({ isOpen, onClose, partnerId, onEdit }: PartnerDetai
           {loading ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-              <p className="mt-2 text-sm text-gray-500">読み込み中...</p>
+              <p className="mt-2 text-sm text-gray-800">読み込み中...</p>
             </div>
           ) : error ? (
             <div className="text-center py-12">
@@ -94,30 +94,30 @@ const PartnerDetailModal = ({ isOpen, onClose, partnerId, onEdit }: PartnerDetai
             <div className="space-y-6">
               {/* 基本情報 */}
               <div>
-                <h4 className="text-lg font-semibold mb-4 pb-2 border-b">基本情報</h4>
+                <h4 className="text-lg font-semibold mb-4 pb-2 border-b text-gray-900">基本情報</h4>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <div className="text-sm text-gray-500">会社名</div>
-                    <div className="text-base font-medium">{partner.companyName}</div>
+                    <div className="text-sm text-gray-700 font-medium">会社名</div>
+                    <div className="text-base font-medium text-gray-900">{partner.companyName}</div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500">代表者名</div>
-                    <div className="text-base">{partner.representativeName || '未設定'}</div>
+                    <div className="text-sm text-gray-700 font-medium">代表者名</div>
+                    <div className="text-base text-gray-900">{partner.representativeName || '未設定'}</div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500">電話番号</div>
-                    <div className="text-base">{partner.phone || '未設定'}</div>
+                    <div className="text-sm text-gray-700 font-medium">電話番号</div>
+                    <div className="text-base text-gray-900">{partner.phone || '未設定'}</div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500">FAX番号</div>
-                    <div className="text-base">{partner.fax || '未設定'}</div>
+                    <div className="text-sm text-gray-700 font-medium">FAX番号</div>
+                    <div className="text-base text-gray-900">{partner.fax || '未設定'}</div>
                   </div>
                   <div className="md:col-span-2">
-                    <div className="text-sm text-gray-500">住所</div>
-                    <div className="text-base">{partner.address || '未設定'}</div>
+                    <div className="text-sm text-gray-700 font-medium">住所</div>
+                    <div className="text-base text-gray-900">{partner.address || '未設定'}</div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500">ウェブサイト</div>
+                    <div className="text-sm text-gray-700 font-medium">ウェブサイト</div>
                     {partner.websiteUrl ? (
                       <a
                         href={partner.websiteUrl}
@@ -128,11 +128,11 @@ const PartnerDetailModal = ({ isOpen, onClose, partnerId, onEdit }: PartnerDetai
                         {partner.websiteUrl}
                       </a>
                     ) : (
-                      <div className="text-base">未設定</div>
+                      <div className="text-base text-gray-900">未設定</div>
                     )}
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500">ステータス</div>
+                    <div className="text-sm text-gray-700 font-medium">ステータス</div>
                     <span className={`inline-block px-2 py-1 text-xs font-medium rounded ${
                       partner.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                     }`}>
@@ -145,7 +145,7 @@ const PartnerDetailModal = ({ isOpen, onClose, partnerId, onEdit }: PartnerDetai
               {/* ログイン情報 */}
               <div>
                 <div className="flex justify-between items-center mb-4 pb-2 border-b">
-                  <h4 className="text-lg font-semibold">ログイン情報</h4>
+                  <h4 className="text-lg font-semibold text-gray-900">ログイン情報</h4>
                   <button
                     onClick={() => onEdit(partner)}
                     className="text-sm text-blue-600 hover:text-blue-800"
@@ -155,24 +155,24 @@ const PartnerDetailModal = ({ isOpen, onClose, partnerId, onEdit }: PartnerDetai
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <div className="text-sm text-gray-500">ユーザー名</div>
-                    <div className="text-base">{partner.username}</div>
+                    <div className="text-sm text-gray-700 font-medium">ユーザー名</div>
+                    <div className="text-base text-gray-900">{partner.username}</div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500">ログインメールアドレス</div>
-                    <div className="text-base">{partner.loginEmail}</div>
+                    <div className="text-sm text-gray-700 font-medium">ログインメールアドレス</div>
+                    <div className="text-base text-gray-900">{partner.loginEmail}</div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500">最終ログイン</div>
-                    <div className="text-base">
+                    <div className="text-sm text-gray-700 font-medium">最終ログイン</div>
+                    <div className="text-base text-gray-900">
                       {partner.lastLoginAt
                         ? new Date(partner.lastLoginAt).toLocaleString('ja-JP')
                         : 'ログイン履歴なし'}
                     </div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500">登録日</div>
-                    <div className="text-base">
+                    <div className="text-sm text-gray-700 font-medium">登録日</div>
+                    <div className="text-base text-gray-900">
                       {new Date(partner.createdAt).toLocaleDateString('ja-JP')}
                     </div>
                   </div>
@@ -181,7 +181,7 @@ const PartnerDetailModal = ({ isOpen, onClose, partnerId, onEdit }: PartnerDetai
 
               {/* 対応都道府県 */}
               <div>
-                <h4 className="text-lg font-semibold mb-4 pb-2 border-b">対応都道府県</h4>
+                <h4 className="text-lg font-semibold mb-4 pb-2 border-b text-gray-900">対応都道府県</h4>
                 <div className="flex flex-wrap gap-2">
                   {partner.prefectures && partner.prefectures.length > 0 ? (
                     partner.prefectures.map((pref: string) => (
@@ -193,45 +193,45 @@ const PartnerDetailModal = ({ isOpen, onClose, partnerId, onEdit }: PartnerDetai
                       </span>
                     ))
                   ) : (
-                    <div className="text-gray-500">未設定</div>
+                    <div className="text-gray-900">未設定</div>
                   )}
                 </div>
               </div>
 
               {/* 事業内容 */}
               <div>
-                <h4 className="text-lg font-semibold mb-4 pb-2 border-b">事業内容</h4>
-                <div className="text-base whitespace-pre-wrap">
+                <h4 className="text-lg font-semibold mb-4 pb-2 border-b text-gray-900">事業内容</h4>
+                <div className="text-base whitespace-pre-wrap text-gray-900">
                   {partner.businessDescription || '未設定'}
                 </div>
               </div>
 
               {/* アピール文章 */}
               <div>
-                <h4 className="text-lg font-semibold mb-4 pb-2 border-b">アピール文章</h4>
-                <div className="text-base whitespace-pre-wrap">
+                <h4 className="text-lg font-semibold mb-4 pb-2 border-b text-gray-900">アピール文章</h4>
+                <div className="text-base whitespace-pre-wrap text-gray-900">
                   {partner.appealText || '未設定'}
                 </div>
               </div>
 
               {/* 統計情報 */}
               <div>
-                <h4 className="text-lg font-semibold mb-4 pb-2 border-b">実績・評価</h4>
+                <h4 className="text-lg font-semibold mb-4 pb-2 border-b text-gray-900">実績・評価</h4>
                 <div className="grid md:grid-cols-4 gap-4">
                   <div className="bg-blue-50 rounded-lg p-4">
-                    <div className="text-sm text-gray-600">顧客数</div>
+                    <div className="text-sm text-gray-900">顧客数</div>
                     <div className="text-2xl font-bold text-blue-600">{partner.customerCount}</div>
                   </div>
                   <div className="bg-green-50 rounded-lg p-4">
-                    <div className="text-sm text-gray-600">見積数</div>
+                    <div className="text-sm text-gray-900">見積数</div>
                     <div className="text-2xl font-bold text-green-600">{partner.quotationCount}</div>
                   </div>
                   <div className="bg-purple-50 rounded-lg p-4">
-                    <div className="text-sm text-gray-600">受注数</div>
+                    <div className="text-sm text-gray-900">受注数</div>
                     <div className="text-2xl font-bold text-purple-600">{partner.selectedQuotationCount}</div>
                   </div>
                   <div className="bg-orange-50 rounded-lg p-4">
-                    <div className="text-sm text-gray-600">平均評価</div>
+                    <div className="text-sm text-gray-900">平均評価</div>
                     <div className="text-2xl font-bold text-orange-600">
                       {partner.averageRating > 0 ? `${partner.averageRating}★` : '-'}
                     </div>
@@ -257,7 +257,7 @@ const PartnerDetailModal = ({ isOpen, onClose, partnerId, onEdit }: PartnerDetai
                         {review.title && (
                           <div className="font-medium text-sm mb-1">{review.title}</div>
                         )}
-                        <div className="text-sm text-gray-600">{review.review}</div>
+                        <div className="text-sm text-gray-900">{review.review}</div>
                       </div>
                     ))}
                   </div>

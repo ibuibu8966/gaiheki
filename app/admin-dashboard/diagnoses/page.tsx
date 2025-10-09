@@ -1,3 +1,5 @@
+"use client";
+
 import AdminSidebar from "../../components/Admin/Common/AdminSidebar";
 import DiagnosesView from "../../components/Admin/Diagnoses/DiagnosesView";
 

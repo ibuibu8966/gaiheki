@@ -1,11 +1,54 @@
+import Link from "next/link";
+
 const ServiceAreasSection = () => {
   const prefectures = [
-    "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県", "茨城県",
-    "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県", "新潟県", "富山県",
-    "石川県", "福井県", "山梨県", "長野県", "岐阜県", "静岡県", "愛知県", "三重県",
-    "滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県", "鳥取県", "島根県",
-    "岡山県", "広島県", "山口県", "徳島県", "香川県", "愛媛県", "高知県", "福岡県",
-    "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
+    { name: "北海道", key: "Hokkaido" },
+    { name: "青森県", key: "Aomori" },
+    { name: "岩手県", key: "Iwate" },
+    { name: "宮城県", key: "Miyagi" },
+    { name: "秋田県", key: "Akita" },
+    { name: "山形県", key: "Yamagata" },
+    { name: "福島県", key: "Fukushima" },
+    { name: "茨城県", key: "Ibaraki" },
+    { name: "栃木県", key: "Tochigi" },
+    { name: "群馬県", key: "Gunma" },
+    { name: "埼玉県", key: "Saitama" },
+    { name: "千葉県", key: "Chiba" },
+    { name: "東京都", key: "Tokyo" },
+    { name: "神奈川県", key: "Kanagawa" },
+    { name: "新潟県", key: "Niigata" },
+    { name: "富山県", key: "Toyama" },
+    { name: "石川県", key: "Ishikawa" },
+    { name: "福井県", key: "Fukui" },
+    { name: "山梨県", key: "Yamanashi" },
+    { name: "長野県", key: "Nagano" },
+    { name: "岐阜県", key: "Gifu" },
+    { name: "静岡県", key: "Shizuoka" },
+    { name: "愛知県", key: "Aichi" },
+    { name: "三重県", key: "Mie" },
+    { name: "滋賀県", key: "Shiga" },
+    { name: "京都府", key: "Kyoto" },
+    { name: "大阪府", key: "Osaka" },
+    { name: "兵庫県", key: "Hyogo" },
+    { name: "奈良県", key: "Nara" },
+    { name: "和歌山県", key: "Wakayama" },
+    { name: "鳥取県", key: "Tottori" },
+    { name: "島根県", key: "Shimane" },
+    { name: "岡山県", key: "Okayama" },
+    { name: "広島県", key: "Hiroshima" },
+    { name: "山口県", key: "Yamaguchi" },
+    { name: "徳島県", key: "Tokushima" },
+    { name: "香川県", key: "Kagawa" },
+    { name: "愛媛県", key: "Ehime" },
+    { name: "高知県", key: "Kochi" },
+    { name: "福岡県", key: "Fukuoka" },
+    { name: "佐賀県", key: "Saga" },
+    { name: "長崎県", key: "Nagasaki" },
+    { name: "熊本県", key: "Kumamoto" },
+    { name: "大分県", key: "Oita" },
+    { name: "宮崎県", key: "Miyazaki" },
+    { name: "鹿児島県", key: "Kagoshima" },
+    { name: "沖縄県", key: "Okinawa" }
   ];
 
   return (
@@ -25,12 +68,13 @@ const ServiceAreasSection = () => {
         {/* 都道府県グリッド */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
           {prefectures.map((prefecture, index) => (
-            <button
+            <Link
               key={index}
-              className="bg-gray-100 hover:bg-orange-50 hover:text-orange-600 text-gray-700 py-3 px-4 rounded-lg text-sm font-medium transition-colors border border-gray-200 hover:border-orange-200"
+              href={`/areas/${prefecture.key}`}
+              className="bg-gray-100 hover:bg-orange-50 hover:text-orange-600 text-gray-700 py-3 px-4 rounded-lg text-sm font-medium transition-colors border border-gray-200 hover:border-orange-200 text-center"
             >
-              {prefecture}
-            </button>
+              {prefecture.name}
+            </Link>
           ))}
         </div>
       </div>

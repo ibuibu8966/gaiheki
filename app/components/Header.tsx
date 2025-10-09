@@ -1,13 +1,34 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 
 const Header = () => {
   const pathname = usePathname();
+  const router = useRouter();
 
   const isActive = (path: string) => {
     return pathname === path;
+  };
+
+  const scrollToDiagnosisForm = () => {
+    // トップページ以外にいる場合は、まずトップページに遷移
+    if (pathname !== '/') {
+      router.push('/#diagnosis-form');
+      // 遷移後にスクロール
+      setTimeout(() => {
+        const element = document.getElementById('diagnosis-form');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    } else {
+      // すでにトップページにいる場合は直接スクロール
+      const element = document.getElementById('diagnosis-form');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
   };
 
   const getLinkClass = (path: string) => {
@@ -67,7 +88,10 @@ const Header = () => {
                 </a>
               </div>
             </div>
-            <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors">
+            <button
+              onClick={scrollToDiagnosisForm}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors"
+            >
               今すぐ相談する
             </button>
           </div>

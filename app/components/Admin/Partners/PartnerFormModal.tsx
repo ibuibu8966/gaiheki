@@ -133,7 +133,7 @@ const PartnerFormModal = ({ isOpen, onClose, onSubmit, partner }: PartnerFormMod
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* ログイン情報 */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">ログイン情報</h4>
+            <h4 className="text-lg font-semibold mb-4 text-gray-900">ログイン情報</h4>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -178,7 +178,7 @@ const PartnerFormModal = ({ isOpen, onClose, onSubmit, partner }: PartnerFormMod
 
           {/* 基本情報 */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">基本情報</h4>
+            <h4 className="text-lg font-semibold mb-4 text-gray-900">基本情報</h4>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -252,7 +252,7 @@ const PartnerFormModal = ({ isOpen, onClose, onSubmit, partner }: PartnerFormMod
 
           {/* 対応都道府県 */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">対応都道府県</h4>
+            <h4 className="text-lg font-semibold mb-4 text-gray-900">対応都道府県</h4>
             <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
               {PREFECTURES.map(pref => (
                 <label key={pref} className="flex items-center space-x-2 cursor-pointer">
@@ -262,7 +262,7 @@ const PartnerFormModal = ({ isOpen, onClose, onSubmit, partner }: PartnerFormMod
                     onChange={() => togglePrefecture(pref)}
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm">{PREFECTURE_NAMES[pref]}</span>
+                  <span className="text-sm text-gray-900">{PREFECTURE_NAMES[pref]}</span>
                 </label>
               ))}
             </div>
@@ -270,7 +270,7 @@ const PartnerFormModal = ({ isOpen, onClose, onSubmit, partner }: PartnerFormMod
 
           {/* 事業内容とアピール文 */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">詳細情報</h4>
+            <h4 className="text-lg font-semibold mb-4 text-gray-900">詳細情報</h4>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

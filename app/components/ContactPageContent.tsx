@@ -20,9 +20,38 @@ const ContactPageContent = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Contact form submitted:", formData);
+
+    try {
+      const response = await fetch("/api/admin/inquiries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert("お問い合わせいただきありがとうございます。\n3営業日以内にご返信させていただきます。");
+
+        // フォームをリセット
+        setFormData({
+          name: "",
+          phone: "",
+          email: "",
+          subject: "",
+          message: ""
+        });
+      } else {
+        alert("送信に失敗しました。もう一度お試しください。");
+      }
+    } catch (error) {
+      console.error("Error submitting inquiry:", error);
+      alert("送信に失敗しました。もう一度お試しください。");
+    }
   };
 
   return (

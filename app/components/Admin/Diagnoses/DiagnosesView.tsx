@@ -81,8 +81,11 @@ const DiagnosesView = () => {
         params.append('status', diagnosisFilter);
       }
 
-      const response = await fetch(`/api/admin/diagnoses?${params}`);
+      const url = `/api/admin/diagnoses?${params}`;
+      console.log('Fetching diagnoses with filter:', diagnosisFilter, 'URL:', url);
+      const response = await fetch(url);
       const result = await response.json();
+      console.log('Diagnoses result:', result);
 
       if (result.success) {
         setDiagnoses(result.data);
@@ -164,26 +167,26 @@ const DiagnosesView = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">診断ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">顧客名</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">延床面積</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">現在の状況</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">工事箇所</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">診断依頼日</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ステータス</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">診断ID</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">顧客名</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">延床面積</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">現在の状況</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">工事箇所</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">診断依頼日</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">ステータス</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">操作</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-4 text-center text-gray-800">
                     読み込み中...
                   </td>
                 </tr>
               ) : diagnoses.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-4 text-center text-gray-800">
                     データがありません
                   </td>
                 </tr>
@@ -245,7 +248,7 @@ const DiagnosesView = () => {
               </h3>
               <button
                 onClick={() => setShowQuotationModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-900"
               >
                 ✕
               </button>
@@ -254,7 +257,7 @@ const DiagnosesView = () => {
             <div className="px-6 py-4">
               <div className="mb-6">
                 <h4 className="font-semibold text-gray-900 mb-2">顧客情報</h4>
-                <div className="bg-gray-50 p-4 rounded-md space-y-2">
+                <div className="bg-gray-50 p-4 rounded-md space-y-2 text-gray-900">
                   <p><span className="font-medium">氏名:</span> {selectedDiagnosis.customerName}</p>
                   <p><span className="font-medium">メール:</span> {selectedDiagnosis.customerEmail}</p>
                   <p><span className="font-medium">電話:</span> {selectedDiagnosis.customerPhone}</p>
@@ -264,7 +267,7 @@ const DiagnosesView = () => {
 
               <div className="mb-6">
                 <h4 className="font-semibold text-gray-900 mb-2">診断情報</h4>
-                <div className="bg-gray-50 p-4 rounded-md space-y-2">
+                <div className="bg-gray-50 p-4 rounded-md space-y-2 text-gray-900">
                   <p><span className="font-medium">都道府県:</span> {selectedDiagnosis.prefecture}</p>
                   <p><span className="font-medium">延床面積:</span> {FLOOR_AREA_LABELS[selectedDiagnosis.floorArea] || selectedDiagnosis.floorArea}</p>
                   <p><span className="font-medium">現在の状況:</span> {CURRENT_SITUATION_LABELS[selectedDiagnosis.currentSituation] || selectedDiagnosis.currentSituation}</p>
@@ -278,7 +281,7 @@ const DiagnosesView = () => {
                 </h4>
 
                 {selectedDiagnosis.quotationCount === 0 ? (
-                  <p className="text-gray-500 text-center py-8">見積もりがまだありません</p>
+                  <p className="text-gray-800 text-center py-8">見積もりがまだありません</p>
                 ) : (
                   <div className="space-y-4">
                     {selectedDiagnosis.quotations.map((quotation) => (
@@ -327,7 +330,7 @@ const DiagnosesView = () => {
                             <p className="text-sm text-gray-700 font-medium mb-1">
                               アピール文
                             </p>
-                            <p className="text-sm text-gray-600">{quotation.appealText}</p>
+                            <p className="text-sm text-gray-900">{quotation.appealText}</p>
                           </div>
                         )}
                       </div>

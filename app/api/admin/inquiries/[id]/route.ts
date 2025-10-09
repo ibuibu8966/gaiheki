@@ -45,14 +45,16 @@ export async function GET(
 
     const formattedInquiry = {
       id: inquiry.id,
-      name: inquiry.customers.customer_name,
-      email: inquiry.customers.customer_email,
+      customerName: inquiry.customers.customer_name,
+      customerEmail: inquiry.customers.customer_email,
+      customerPhone: "",
       subject: inquiry.subject,
-      inquiryContent: inquiry.inquiry_content,
+      content: inquiry.inquiry_content,
       status: inquiry.inquiry_status,
       statusLabel: getStatusLabel(inquiry.inquiry_status),
       adminMemo: inquiry.admin_memo,
-      createdAt: inquiry.created_at.toISOString().split("T")[0],
+      createdAt: inquiry.created_at.toISOString(),
+      createdDate: inquiry.created_at.toISOString().split("T")[0],
     };
 
     return NextResponse.json({
@@ -124,14 +126,16 @@ export async function PATCH(
 
     const formattedInquiry = {
       id: updatedInquiry.id,
-      name: updatedInquiry.customers.customer_name,
-      email: updatedInquiry.customers.customer_email,
+      customerName: updatedInquiry.customers.customer_name,
+      customerEmail: updatedInquiry.customers.customer_email,
+      customerPhone: "",
       subject: updatedInquiry.subject,
-      inquiryContent: updatedInquiry.inquiry_content,
+      content: updatedInquiry.inquiry_content,
       status: updatedInquiry.inquiry_status,
       statusLabel: getStatusLabel(updatedInquiry.inquiry_status),
       adminMemo: updatedInquiry.admin_memo,
-      createdAt: updatedInquiry.created_at.toISOString().split("T")[0],
+      createdAt: updatedInquiry.created_at.toISOString(),
+      createdDate: updatedInquiry.created_at.toISOString().split("T")[0],
     };
 
     return NextResponse.json({

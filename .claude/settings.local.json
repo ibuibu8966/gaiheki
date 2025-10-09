@@ -12,7 +12,8 @@
       "Bash(npx prisma migrate dev:*)",
       "Bash(npx prisma generate:*)",
       "Bash(npx tsx:*)",
-      "Bash(npx prisma db push:*)"
+      "Bash(npx prisma db push:*)",
+      "Bash(taskkill:*)"
     ],
     "deny": [],
     "ask": []

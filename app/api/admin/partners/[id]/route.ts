@@ -4,10 +4,11 @@ import { prisma } from '@/lib/prisma';
 // GET: 加盟店詳細取得
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const partnerId = parseInt(params.id);
+    const { id } = await params;
+    const partnerId = parseInt(id);
 
     const partner = await prisma.partners.findUnique({
       where: { id: partnerId },

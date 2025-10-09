@@ -1,4 +1,15 @@
+"use client";
+
+import Link from "next/link";
+
 const CTASection = () => {
+  const scrollToDiagnosisForm = () => {
+    const element = document.getElementById('diagnosis-form');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <section className="bg-orange-500 text-white py-16 px-4">
       <div className="max-w-4xl mx-auto text-center">
@@ -14,12 +25,18 @@ const CTASection = () => {
         
         {/* ボタンエリア */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-          <button className="bg-white text-orange-500 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors text-lg">
+          <button
+            onClick={scrollToDiagnosisForm}
+            className="bg-white text-orange-500 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors text-lg"
+          >
             無料診断を始める
           </button>
-          <button className="border-2 border-white text-white font-bold py-3 px-8 rounded-full hover:bg-white hover:text-orange-500 transition-colors text-lg">
+          <Link
+            href="/contact"
+            className="border-2 border-white text-white font-bold py-3 px-8 rounded-full hover:bg-white hover:text-orange-500 transition-colors text-lg"
+          >
             お電話で相談する
-          </button>
+          </Link>
         </div>
         
         {/* 営業時間情報 */}

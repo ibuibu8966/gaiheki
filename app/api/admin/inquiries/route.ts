@@ -82,6 +82,73 @@ export async function GET(request: Request) {
   }
 }
 
+// POST: 問い合わせ新規作成
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { name, phone, email, subject, message } = body;
+
+    if (!name || !phone || !email || !subject || !message) {
+      return NextResponse.json(
+        { success: false, error: 'All fields are required' },
+        { status: 400 }
+      );
+    }
+
+    // 顧客を作成または取得
+    let customer = await prisma.customers.findFirst({
+      where: { customer_email: email }
+    });
+
+    if (!customer) {
+      // 新規顧客を作成（partner_idは1をデフォルトとする）
+      customer = await prisma.customers.create({
+        data: {
+          partner_id: 1,
+          customer_name: name,
+          customer_phone: phone,
+          customer_email: email,
+          construction_address: '',
+          customer_construction_type: 'EXTERIOR_PAINTING',
+          construction_amount: 0,
+          customer_status: 'ORDERED',
+          updated_at: new Date()
+        }
+      });
+    }
+
+    // 問い合わせを作成
+    const inquiry = await prisma.inquiries.create({
+      data: {
+        customer_id: customer.id,
+        subject: subject,
+        inquiry_content: message,
+        inquiry_status: 'PENDING',
+        updated_at: new Date()
+      }
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        id: inquiry.id,
+        customerId: customer.id
+      }
+    });
+
+  } catch (error) {
+    console.error('Inquiry creation error:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to create inquiry',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      },
+      { status: 500 }
+    );
+  }
+}
+
 // PATCH: 問い合わせステータス更新
 export async function PATCH(request: Request) {
   try {

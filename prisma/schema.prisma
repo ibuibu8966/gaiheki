@@ -90,18 +90,20 @@ model customers {
 }
 
 model diagnosis_requests {
-  id                Int              @id @default(autoincrement())
-  diagnosis_number  String           @unique @db.VarChar(20)
-  customer_id       Int
-  prefecture        Prefecture
-  floor_area        FloorArea
-  current_situation CurrentSituation
-  construction_type ConstructionType
-  status            DiagnosisStatus  @default(RECRUITING)
-  created_at        DateTime         @default(now())
-  updated_at        DateTime
-  customers         customers        @relation(fields: [customer_id], references: [id])
-  quotations        quotations[]
+  id                   Int              @id @default(autoincrement())
+  diagnosis_number     String           @unique @db.VarChar(20)
+  customer_id          Int
+  designated_partner_id Int?
+  prefecture           Prefecture
+  floor_area           FloorArea
+  current_situation    CurrentSituation
+  construction_type    ConstructionType
+  status               DiagnosisStatus  @default(RECRUITING)
+  created_at           DateTime         @default(now())
+  updated_at           DateTime
+  customers            customers        @relation(fields: [customer_id], references: [id])
+  designated_partner   partners?        @relation("DesignatedDiagnoses", fields: [designated_partner_id], references: [id])
+  quotations           quotations[]
 }
 
 model inquiries {
@@ -197,18 +199,19 @@ model partner_prefectures {
 }
 
 model partners {
-  id                  Int                   @id @default(autoincrement())
-  username            String                @unique @db.VarChar(100)
-  login_email         String                @unique @db.VarChar(150)
-  password_hash       String                @db.VarChar(255)
-  is_active           Boolean               @default(true)
-  last_login_at       DateTime?
-  created_at          DateTime              @default(now())
-  updated_at          DateTime
-  customers           customers[]
-  partner_details     partner_details?
-  partner_prefectures partner_prefectures[]
-  quotations          quotations[]
+  id                     Int                   @id @default(autoincrement())
+  username               String                @unique @db.VarChar(100)
+  login_email            String                @unique @db.VarChar(150)
+  password_hash          String                @db.VarChar(255)
+  is_active              Boolean               @default(true)
+  last_login_at          DateTime?
+  created_at             DateTime              @default(now())
+  updated_at             DateTime
+  customers              customers[]
+  partner_details        partner_details?
+  partner_prefectures    partner_prefectures[]
+  quotations             quotations[]
+  designated_diagnoses   diagnosis_requests[]  @relation("DesignatedDiagnoses")
 }
 
 model quotations {

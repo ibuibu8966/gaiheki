@@ -1,5 +1,92 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { generateDiagnosisNumber } from '@/lib/utils/diagnosisNumber';
+
+// POST: 診断依頼新規作成
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { name, phone, email, prefecture, floorArea, currentSituation, constructionType, designatedPartnerId } = body;
+
+    if (!name || !phone || !email || !prefecture) {
+      return NextResponse.json(
+        { success: false, error: 'Required fields are missing' },
+        { status: 400 }
+      );
+    }
+
+    // 顧客を作成または取得
+    let customer = await prisma.customers.findFirst({
+      where: { customer_email: email }
+    });
+
+    if (!customer) {
+      customer = await prisma.customers.create({
+        data: {
+          partner_id: designatedPartnerId || 1,
+          customer_name: name,
+          customer_phone: phone,
+          customer_email: email,
+          construction_address: prefecture,
+          customer_construction_type: constructionType || 'EXTERIOR_PAINTING',
+          construction_amount: 0,
+          customer_status: 'ORDERED',
+          updated_at: new Date()
+        }
+      });
+    }
+
+    // 診断番号を生成
+    const diagnosisNumber = await generateDiagnosisNumber();
+
+    // 診断依頼を作成（業者指定があればステータスをDESIGNATEDに）
+    const diagnosisData: any = {
+      diagnosis_number: diagnosisNumber,
+      customer_id: customer.id,
+      prefecture: prefecture,
+      floor_area: floorArea || 'UNKNOWN',
+      current_situation: currentSituation || 'CONSIDERING_CONSTRUCTION',
+      construction_type: constructionType || 'EXTERIOR_PAINTING',
+      status: designatedPartnerId ? 'DESIGNATED' : 'RECRUITING',
+      updated_at: new Date()
+    };
+
+    // designated_partner_idフィールドが存在する場合のみ追加
+    if (designatedPartnerId) {
+      diagnosisData.designated_partner_id = designatedPartnerId;
+    }
+
+    const diagnosis = await prisma.diagnosis_requests.create({
+      data: diagnosisData
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        id: diagnosis.id,
+        diagnosisNumber: diagnosis.diagnosis_number,
+        customerId: customer.id
+      }
+    });
+
+  } catch (error) {
+    console.error('Diagnosis creation error:', error);
+    console.error('Error details:', {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to create diagnosis',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        details: error instanceof Error ? error.stack : 'No details available'
+      },
+      { status: 500 }
+    );
+  }
+}
 
 // GET: 診断依頼一覧取得
 export async function GET(request: Request) {
@@ -13,6 +100,7 @@ export async function GET(request: Request) {
     // ステータスフィルター
     if (status && status !== 'all') {
       where.status = status;
+      console.log('Filtering by status:', status);
     }
 
     // 検索条件
@@ -26,6 +114,7 @@ export async function GET(request: Request) {
       };
     }
 
+    console.log('Query where condition:', JSON.stringify(where));
     const diagnoses = await prisma.diagnosis_requests.findMany({
       where,
       include: {
@@ -35,6 +124,15 @@ export async function GET(request: Request) {
             customer_email: true,
             customer_phone: true,
             construction_address: true
+          }
+        },
+        designated_partner: {
+          include: {
+            partner_details: {
+              select: {
+                company_name: true
+              }
+            }
           }
         },
         quotations: {
@@ -56,6 +154,7 @@ export async function GET(request: Request) {
       }
     });
 
+    console.log(`Found ${diagnoses.length} diagnoses`);
     const formattedDiagnoses = diagnoses.map(diag => {
       // 見積もりを金額順にソート
       const sortedQuotations = [...diag.quotations].sort((a, b) =>
@@ -81,6 +180,8 @@ export async function GET(request: Request) {
         constructionType: diag.construction_type,
         status: diag.status,
         statusLabel: getStatusLabel(diag.status),
+        designatedPartnerId: (diag as any).designated_partner_id || null,
+        designatedPartnerName: (diag as any).designated_partner?.partner_details?.company_name || null,
         quotationCount: sortedQuotations.length,
         quotations: sortedQuotations.map(q => ({
           id: q.id,

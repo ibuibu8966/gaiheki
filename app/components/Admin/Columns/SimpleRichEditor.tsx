@@ -44,7 +44,7 @@ const SimpleRichEditor = ({ value, onChange }: SimpleRichEditorProps) => {
           <button
             type="button"
             onClick={() => execCommand("bold")}
-            className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 font-bold"
+            className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 font-bold text-gray-900"
             title="太字 (Ctrl+B)"
           >
             B
@@ -52,7 +52,7 @@ const SimpleRichEditor = ({ value, onChange }: SimpleRichEditorProps) => {
           <button
             type="button"
             onClick={() => execCommand("italic")}
-            className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 italic"
+            className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 italic text-gray-900"
             title="斜体 (Ctrl+I)"
           >
             I
@@ -60,7 +60,7 @@ const SimpleRichEditor = ({ value, onChange }: SimpleRichEditorProps) => {
           <button
             type="button"
             onClick={() => execCommand("underline")}
-            className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 underline"
+            className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 underline text-gray-900"
             title="下線 (Ctrl+U)"
           >
             U
@@ -72,7 +72,7 @@ const SimpleRichEditor = ({ value, onChange }: SimpleRichEditorProps) => {
           <button
             type="button"
             onClick={() => execCommand("justifyLeft")}
-            className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50"
+            className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 text-gray-900"
             title="左揃え"
           >
             <span className="text-lg">⬅</span>
@@ -80,7 +80,7 @@ const SimpleRichEditor = ({ value, onChange }: SimpleRichEditorProps) => {
           <button
             type="button"
             onClick={() => execCommand("justifyCenter")}
-            className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50"
+            className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 text-gray-900"
             title="中央揃え"
           >
             <span className="text-lg">↔</span>
@@ -88,7 +88,7 @@ const SimpleRichEditor = ({ value, onChange }: SimpleRichEditorProps) => {
           <button
             type="button"
             onClick={() => execCommand("justifyRight")}
-            className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50"
+            className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 text-gray-900"
             title="右揃え"
           >
             <span className="text-lg">➡</span>
@@ -102,7 +102,7 @@ const SimpleRichEditor = ({ value, onChange }: SimpleRichEditorProps) => {
               execCommand("formatBlock", e.target.value);
               e.target.value = "";
             }}
-            className="px-3 py-2 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50"
+            className="px-3 py-2 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 text-gray-900"
             defaultValue=""
           >
             <option value="">見出し</option>
@@ -117,7 +117,7 @@ const SimpleRichEditor = ({ value, onChange }: SimpleRichEditorProps) => {
         <div className="flex gap-1 border-r border-gray-300 pr-3">
           <select
             onChange={(e) => execCommand("fontSize", e.target.value)}
-            className="px-3 py-2 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50"
+            className="px-3 py-2 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 text-gray-900"
             defaultValue="3"
           >
             <option value="1">10px</option>
@@ -132,7 +132,7 @@ const SimpleRichEditor = ({ value, onChange }: SimpleRichEditorProps) => {
 
         {/* 色 */}
         <div className="flex gap-1">
-          <label className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 cursor-pointer">
+          <label className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 cursor-pointer text-gray-900">
             <span className="text-sm">色</span>
             <input
               type="color"
@@ -151,12 +151,13 @@ const SimpleRichEditor = ({ value, onChange }: SimpleRichEditorProps) => {
         onInput={updateContent}
         onPaste={handlePaste}
         dangerouslySetInnerHTML={{ __html: value }}
-        className="min-h-[500px] p-6 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
+        className="min-h-[500px] p-6 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset text-gray-900"
         style={{
           wordBreak: "break-word",
           overflowWrap: "break-word",
           fontSize: "16px",
           lineHeight: "1.6",
+          color: "#111827",
         }}
       />
     </div>

@@ -210,12 +210,27 @@ export async function PATCH(request: Request) {
 
     // ステータス更新のみの場合
     if (isActive !== undefined && Object.keys(updateData).length === 0) {
-      const updatedPartner = await prisma.partners.update({
-        where: { id: partnerId },
-        data: { is_active: isActive, updated_at: new Date() },
-        include: {
-          partner_details: true
-        }
+      // トランザクションでpartnersとpartner_detailsの両方を更新
+      const updatedPartner = await prisma.$transaction(async (tx) => {
+        // partners.is_active を更新
+        const partner = await tx.partners.update({
+          where: { id: partnerId },
+          data: { is_active: isActive, updated_at: new Date() },
+          include: {
+            partner_details: true
+          }
+        });
+
+        // partner_details.partners_status も連動して更新
+        await tx.partner_details.update({
+          where: { partner_id: partnerId },
+          data: {
+            partners_status: isActive ? 'ACTIVE' : 'INACTIVE',
+            updated_at: new Date()
+          }
+        });
+
+        return partner;
       });
 
       return NextResponse.json({
