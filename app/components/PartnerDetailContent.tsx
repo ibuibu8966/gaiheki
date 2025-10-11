@@ -317,6 +317,28 @@ const PartnerDetailContent = ({ partnerId }: PartnerDetailContentProps) => {
                     </div>
                   )}
 
+                  {partner.supportedPrefectures.length > 0 && (
+                    <div className="pt-4 border-t border-gray-100">
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        対応エリア
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {partner.supportedPrefectures.map((pref, index) => (
+                          <span
+                            key={index}
+                            className="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 px-2.5 py-1 rounded-lg text-xs font-medium border border-gray-200"
+                          >
+                            {pref}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="pt-2">
                     <a
                       href="#diagnosis-form"
@@ -331,29 +353,6 @@ const PartnerDetailContent = ({ partnerId }: PartnerDetailContentProps) => {
                 </div>
               </div>
             </div>
-
-            {/* 対応エリア */}
-            {partner.supportedPrefectures.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  対応エリア
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {partner.supportedPrefectures.map((pref, index) => (
-                    <span
-                      key={index}
-                      className="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200 hover:border-orange-300 transition-colors"
-                    >
-                      {pref}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
