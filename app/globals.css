@@ -10,8 +10,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-orange-600: var(--color-orange-600);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-noto-serif-jp);
+  --font-sans: var(--font-noto-sans-jp);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,7 +24,14 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  letter-spacing: 0.02em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-noto-serif-jp), serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
 }
 
 /* 入力フィールドのテキスト色を濃くする */
