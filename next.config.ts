@@ -11,10 +11,6 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
-  experimental: {
-    // Skip error page generation during build
-    skipTrailingSlashRedirect: true,
-  },
 };
 
 export default nextConfig;
