@@ -66,6 +66,21 @@ const CONSTRUCTION_TYPE_LABELS: Record<string, string> = {
   FULL_REPLACEMENT: '全面張替'
 };
 
+const PREFECTURE_LABELS: Record<string, string> = {
+  Hokkaido: '北海道', Aomori: '青森県', Iwate: '岩手県', Miyagi: '宮城県',
+  Akita: '秋田県', Yamagata: '山形県', Fukushima: '福島県', Ibaraki: '茨城県',
+  Tochigi: '栃木県', Gunma: '群馬県', Saitama: '埼玉県', Chiba: '千葉県',
+  Tokyo: '東京都', Kanagawa: '神奈川県', Niigata: '新潟県', Toyama: '富山県',
+  Ishikawa: '石川県', Fukui: '福井県', Yamanashi: '山梨県', Nagano: '長野県',
+  Gifu: '岐阜県', Shizuoka: '静岡県', Aichi: '愛知県', Mie: '三重県',
+  Shiga: '滋賀県', Kyoto: '京都府', Osaka: '大阪府', Hyogo: '兵庫県',
+  Nara: '奈良県', Wakayama: '和歌山県', Tottori: '鳥取県', Shimane: '島根県',
+  Okayama: '岡山県', Hiroshima: '広島県', Yamaguchi: '山口県', Tokushima: '徳島県',
+  Kagawa: '香川県', Ehime: '愛媛県', Kochi: '高知県', Fukuoka: '福岡県',
+  Saga: '佐賀県', Nagasaki: '長崎県', Kumamoto: '熊本県', Oita: '大分県',
+  Miyazaki: '宮崎県', Kagoshima: '鹿児島県', Okinawa: '沖縄県'
+};
+
 const DiagnosesView = () => {
   const [diagnosisFilter, setDiagnosisFilter] = useState("all");
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
@@ -273,7 +288,7 @@ const DiagnosesView = () => {
               <div className="mb-6">
                 <h4 className="font-semibold text-gray-900 mb-2">診断情報</h4>
                 <div className="bg-gray-50 p-4 rounded-md space-y-2 text-gray-900">
-                  <p><span className="font-medium">都道府県:</span> {selectedDiagnosis.prefecture}</p>
+                  <p><span className="font-medium">都道府県:</span> {PREFECTURE_LABELS[selectedDiagnosis.prefecture] || selectedDiagnosis.prefecture}</p>
                   <p><span className="font-medium">延床面積:</span> {FLOOR_AREA_LABELS[selectedDiagnosis.floorArea] || selectedDiagnosis.floorArea}</p>
                   <p><span className="font-medium">現在の状況:</span> {CURRENT_SITUATION_LABELS[selectedDiagnosis.currentSituation] || selectedDiagnosis.currentSituation}</p>
                   <p><span className="font-medium">工事箇所:</span> {CONSTRUCTION_TYPE_LABELS[selectedDiagnosis.constructionType] || selectedDiagnosis.constructionType}</p>
