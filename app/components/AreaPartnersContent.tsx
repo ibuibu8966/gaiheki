@@ -23,7 +23,6 @@ interface AreaPartnersContentProps {
 const AreaPartnersContent = ({ prefecture, prefectureName }: AreaPartnersContentProps) => {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedPartners, setSelectedPartners] = useState<number[]>([]);
 
   useEffect(() => {
     fetchPartners();
@@ -45,14 +44,6 @@ const AreaPartnersContent = ({ prefecture, prefectureName }: AreaPartnersContent
     } finally {
       setLoading(false);
     }
-  };
-
-  const togglePartnerSelection = (partnerId: number) => {
-    setSelectedPartners(prev =>
-      prev.includes(partnerId)
-        ? prev.filter(id => id !== partnerId)
-        : [...prev, partnerId]
-    );
   };
 
   const renderStars = (rating: number) => {
@@ -125,29 +116,6 @@ const AreaPartnersContent = ({ prefecture, prefectureName }: AreaPartnersContent
           </p>
         </div>
 
-        {/* 選択された加盟店 */}
-        {selectedPartners.length > 0 && (
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                  <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
-                </svg>
-                <span className="font-medium text-gray-800">
-                  {selectedPartners.length}社を選択中
-                </span>
-              </div>
-              <button
-                onClick={() => setSelectedPartners([])}
-                className="text-sm text-gray-600 hover:text-gray-800 underline"
-              >
-                クリア
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* 加盟店一覧 */}
         {partners.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
@@ -163,23 +131,13 @@ const AreaPartnersContent = ({ prefecture, prefectureName }: AreaPartnersContent
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
               >
                 <div className="p-6">
-                  <div className="flex items-start gap-4">
-                    {/* チェックボックス */}
-                    <input
-                      type="checkbox"
-                      checked={selectedPartners.includes(partner.id)}
-                      onChange={() => togglePartnerSelection(partner.id)}
-                      className="mt-1 w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                    />
-
-                    <div className="flex-1">
-                      {/* 会社名と評価 */}
-                      <div className="mb-3">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                          {partner.companyName}
-                        </h2>
-                        {renderStars(partner.averageRating)}
-                      </div>
+                  {/* 会社名と評価 */}
+                  <div className="mb-3">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                      {partner.companyName}
+                    </h2>
+                    {renderStars(partner.averageRating)}
+                  </div>
 
                       {/* 住所と電話番号 */}
                       <div className="grid md:grid-cols-2 gap-4 mb-4">
@@ -202,26 +160,24 @@ const AreaPartnersContent = ({ prefecture, prefectureName }: AreaPartnersContent
                         {partner.appealText}
                       </p>
 
-                      {/* ボタン */}
-                      <div className="flex gap-3">
-                        <Link
-                          href={`/partners/${partner.id}`}
-                          className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-6 rounded-lg transition-colors"
-                        >
-                          詳細を見る
-                        </Link>
-                        {partner.websiteUrl && (
-                          <a
-                            href={partner.websiteUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="border border-gray-300 hover:border-gray-400 text-gray-700 font-medium py-2 px-6 rounded-lg transition-colors"
-                          >
-                            公式サイト
-                          </a>
-                        )}
-                      </div>
-                    </div>
+                  {/* ボタン */}
+                  <div className="flex gap-3">
+                    <Link
+                      href={`/partners/${partner.id}`}
+                      className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+                    >
+                      詳細を見る
+                    </Link>
+                    {partner.websiteUrl && (
+                      <a
+                        href={partner.websiteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="border border-gray-300 hover:border-gray-400 text-gray-700 font-medium py-2 px-6 rounded-lg transition-colors"
+                      >
+                        公式サイト
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
