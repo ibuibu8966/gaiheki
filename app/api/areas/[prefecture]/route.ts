@@ -29,45 +29,74 @@ export async function GET(
       include: {
         partners: {
           include: {
-            partner_details: true,
-            customers: {
-              where: {
-                customer_rating: { not: null }
-              },
-              select: {
-                customer_rating: true
-              }
-            }
+            partner_details: true
           }
         }
       }
     });
 
-    // 加盟店ごとに評価を集計
-    const partnersWithRating = partnerPrefectures.map(pp => {
-      const partner = pp.partners;
-      const ratings = partner.customers
-        .map(c => c.customer_rating)
-        .filter((r): r is number => r !== null);
+    // 各パートナーのレビューをordersテーブルから取得
+    const partnersWithRating = await Promise.all(
+      partnerPrefectures.map(async (pp) => {
+        const partner = pp.partners;
 
-      const averageRating = ratings.length > 0
-        ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
-        : 0;
+        // レビューがある完了案件を取得
+        const orders = await prisma.orders.findMany({
+          where: {
+            order_status: 'COMPLETED',
+            quotations: {
+              partner_id: partner.id,
+              is_selected: true,
+              diagnosis_requests: {
+                customers: {
+                  customer_rating: {
+                    not: null
+                  }
+                }
+              }
+            }
+          },
+          include: {
+            quotations: {
+              include: {
+                diagnosis_requests: {
+                  include: {
+                    customers: {
+                      select: {
+                        customer_rating: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
 
-      const reviewCount = ratings.length;
+        // 評価を集計
+        const ratings = orders
+          .map(order => order.quotations.diagnosis_requests.customers.customer_rating)
+          .filter((r): r is number => r !== null);
 
-      return {
-        id: partner.id,
-        companyName: partner.partner_details?.company_name || '',
-        address: partner.partner_details?.address || '',
-        phoneNumber: partner.partner_details?.phone_number || '',
-        appealText: partner.partner_details?.appeal_text || '',
-        businessDescription: partner.partner_details?.business_description || '',
-        websiteUrl: partner.partner_details?.website_url || null,
-        averageRating: Math.round(averageRating * 10) / 10, // 小数点1桁
-        reviewCount
-      };
-    });
+        const averageRating = ratings.length > 0
+          ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
+          : 0;
+
+        const reviewCount = ratings.length;
+
+        return {
+          id: partner.id,
+          companyName: partner.partner_details?.company_name || '',
+          address: partner.partner_details?.address || '',
+          phoneNumber: partner.partner_details?.phone_number || '',
+          appealText: partner.partner_details?.appeal_text || '',
+          businessDescription: partner.partner_details?.business_description || '',
+          websiteUrl: partner.partner_details?.website_url || null,
+          averageRating: Math.round(averageRating * 10) / 10, // 小数点1桁
+          reviewCount
+        };
+      })
+    );
 
     // 評価順（高い順）にソート
     partnersWithRating.sort((a, b) => {
