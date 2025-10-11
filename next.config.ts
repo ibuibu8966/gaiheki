@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
+  experimental: {
+    // Disable static generation for error pages to avoid Html import issues
+    optimizePackageImports: ['react', 'react-dom'],
+  },
+  // Skip static generation for error pages
+  staticPageGenerationTimeout: 120,
 };
 
 export default nextConfig;

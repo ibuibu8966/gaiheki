@@ -9,6 +9,9 @@ export default function GlobalError({
 }) {
   return (
     <html lang="ja">
+      <head>
+        <title>エラーが発生しました</title>
+      </head>
       <body>
         <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-50">
           <h2 className="text-5xl font-bold mb-4 text-gray-900">500</h2>
