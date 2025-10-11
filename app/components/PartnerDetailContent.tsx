@@ -39,7 +39,7 @@ interface PartnerDetailContentProps {
 const PartnerDetailContent = ({ partnerId }: PartnerDetailContentProps) => {
   const [partner, setPartner] = useState<PartnerDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showDiagnosisForm, setShowDiagnosisForm] = useState(false);
+  const [showDiagnosisForm, setShowDiagnosisForm] = useState(true); // デフォルトで表示
 
   useEffect(() => {
     fetchPartnerDetail();
@@ -222,9 +222,9 @@ const PartnerDetailContent = ({ partnerId }: PartnerDetailContentProps) => {
           </div>
 
           {/* 右カラム: 連絡先・営業情報 */}
-          <div className="space-y-6">
+          <div className="lg:col-span-1 space-y-6">
             {/* 連絡先 */}
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-8">
+            <div className="bg-white rounded-lg shadow-md p-6 lg:sticky lg:top-8">
               <h2 className="text-xl font-bold text-gray-800 mb-4">会社情報</h2>
 
               <div className="space-y-4">
@@ -280,25 +280,15 @@ const PartnerDetailContent = ({ partnerId }: PartnerDetailContentProps) => {
                 )}
 
                 <div className="pt-4">
-                  <button
-                    onClick={() => setShowDiagnosisForm(!showDiagnosisForm)}
+                  <a
+                    href="#diagnosis-form"
                     className="block w-full bg-orange-500 hover:bg-orange-600 text-center text-white font-bold py-3 rounded-lg transition-colors"
                   >
-                    {showDiagnosisForm ? "フォームを閉じる" : "無料診断を申し込む"}
-                  </button>
+                    無料診断を申し込む
+                  </a>
                 </div>
               </div>
             </div>
-
-            {/* 診断フォーム */}
-            {showDiagnosisForm && (
-              <DesignatedDiagnosisForm
-                partnerId={partner.id}
-                partnerName={partner.companyName}
-                supportedPrefectures={partner.supportedPrefectures}
-                onSuccess={() => setShowDiagnosisForm(false)}
-              />
-            )}
 
             {/* 対応エリア */}
             {partner.supportedPrefectures.length > 0 && (
@@ -317,6 +307,19 @@ const PartnerDetailContent = ({ partnerId }: PartnerDetailContentProps) => {
               </div>
             )}
           </div>
+        </div>
+
+        {/* 診断申込フォーム */}
+        <div id="diagnosis-form" className="mt-8">
+          <DesignatedDiagnosisForm
+            partnerId={partner.id}
+            partnerName={partner.companyName}
+            supportedPrefectures={partner.supportedPrefectures}
+            onSuccess={() => {
+              alert('診断依頼を受け付けました');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         </div>
       </div>
     </div>
