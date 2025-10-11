@@ -48,32 +48,35 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section className="bg-white py-20 px-4">
+    <section className="bg-gradient-to-b from-white via-gray-50 to-white py-24 px-4">
       <div className="max-w-7xl mx-auto">
         {/* タイトル */}
-        <div className="text-center mb-16">
-          <p className="text-amber-600 text-sm font-semibold mb-3 tracking-widest uppercase">Why Choose Us</p>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">選ばれる理由</h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-amber-600 mx-auto"></div>
+        <div className="text-center mb-20">
+          <p className="text-amber-600 text-sm font-bold mb-4 tracking-[0.3em] uppercase">Why Choose Us</p>
+          <h2 className="font-serif text-5xl md:text-6xl font-black text-gray-900 mb-6 tracking-wide">選ばれる理由</h2>
+          <div className="w-32 h-1.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto"></div>
         </div>
 
         {/* 特徴グリッド */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 hover:border-amber-400/50"
+              className="group relative"
             >
-              <div className="flex flex-col items-center text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-black to-gray-800 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-transparent rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative bg-white rounded-3xl p-10 shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-gray-100 hover:border-amber-400/50">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-24 h-24 bg-gradient-to-br from-black via-gray-900 to-black rounded-2xl flex items-center justify-center mb-8 shadow-[0_10px_30px_rgba(0,0,0,0.3)] group-hover:scale-110 group-hover:shadow-[0_15px_40px_rgba(251,191,36,0.3)] transition-all duration-300">
+                    {feature.icon}
+                  </div>
+                  <h3 className="font-serif text-xl font-bold text-gray-900 mb-5 leading-tight tracking-wide">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed tracking-wide">
+                    {feature.description}
+                  </p>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4 leading-tight">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  {feature.description}
-                </p>
               </div>
             </div>
           ))}
