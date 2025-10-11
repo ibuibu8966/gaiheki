@@ -26,3 +26,22 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* 入力フィールドのテキスト色を濃くする */
+input,
+textarea,
+select {
+  color: #111827;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #9CA3AF;
+}
+
+/* モーダル内のすべてのテキストを濃くする */
+.bg-gray-50 p,
+.bg-gray-50 span,
+.bg-gray-50 div {
+  color: #111827;
+}

@@ -29,14 +29,26 @@ npm install
 
 ### 2. 環境変数の設定
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
-`.env.local`を編集して、実際の値を設定してください：
+`.env`を編集して、実際の値を設定してください：
+
+#### Supabase接続設定
 ```env
-DATABASE_URL="postgresql://username:password@localhost:5432/gaiheki_db"
+# Supabase Session pooler (ポート5432を使用)
+DATABASE_URL="postgresql://postgres.<project-ref>:<password>@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres"
+DIRECT_URL="postgresql://postgres.<project-ref>:<password>@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres"
+
+# JWT設定
 JWT_SECRET="your-super-secret-jwt-key"
+JWT_EXPIRES_IN="24h"
+
+# パスワードハッシュ
+BCRYPT_SALT_ROUNDS=12
 ```
+
+> **注意**: Supabaseでは**Session pooler（ポート5432）**を使用してください。Transaction pooler（ポート6543）はPrismaのPREPARE文に対応していません。
 
 ### 3. データベースのセットアップ
 
@@ -180,11 +192,32 @@ DEFAULT_ADMIN_PASSWORD="your_secure_password"
 
 ## 🛠️ 技術スタック
 
-- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS v4
 - **Backend**: Next.js API Routes, レイヤードアーキテクチャ
-- **Database**: PostgreSQL, Prisma ORM
+- **Database**: PostgreSQL (Supabase), Prisma ORM
 - **Authentication**: JWT, bcrypt
-- **Development**: ESLint, TypeScript
+- **Development**: ESLint, TypeScript, Turbopack
+
+## ☁️ Supabaseインフラ
+
+### データベース情報
+- **Provider**: Supabase PostgreSQL
+- **Region**: AWS ap-northeast-1 (Tokyo)
+- **Connection**: Session pooler（ポート5432）
+- **Tables**: 14テーブル
+  - 管理者関連: `admins`, `admin_sessions`
+  - ビジネス関連: `partners`, `customers`, `articles`
+  - 取引関連: `partner_applications`, `diagnosis_requests`, `quotations`, `orders`
+  - その他: `partner_details`, `partner_prefectures`, etc.
+
+### 接続確認
+```bash
+# Prisma経由でデータベース接続確認
+npx prisma db pull
+
+# Prisma Studioで確認
+npm run prisma:studio
+```
 
 ---
 

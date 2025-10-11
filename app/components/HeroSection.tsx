@@ -1,4 +1,13 @@
+"use client";
+
 const HeroSection = () => {
+  const scrollToDiagnosisForm = () => {
+    const element = document.getElementById('diagnosis-form');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <section className="bg-orange-500 text-white py-16 px-4">
       <div className="max-w-7xl mx-auto">
@@ -84,7 +93,10 @@ const HeroSection = () => {
           <div className="bg-white rounded-2xl p-8 text-center shadow-lg">
             <p className="text-orange-500 text-sm font-medium mb-2">無料診断はたった30秒！</p>
             <h3 className="text-2xl font-bold text-gray-800 mb-6">今すぐ外壁の状態をチェック</h3>
-            <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-full text-lg w-full mb-4 transition-colors">
+            <button
+              onClick={scrollToDiagnosisForm}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-full text-lg w-full mb-4 transition-colors"
+            >
               無料診断を始める
             </button>
             <div className="flex items-center justify-center text-sm text-gray-600">
