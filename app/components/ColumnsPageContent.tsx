@@ -88,8 +88,17 @@ const ColumnsPageContent = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen relative py-8">
+      {/* 背景画像 */}
+      <div className="fixed inset-0 z-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{backgroundImage: 'url(/page-bg.jpg)'}}
+        ></div>
+        <div className="absolute inset-0 bg-white/80 backdrop-blur-sm"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* パンくずナビ */}
         <div className="mb-8">
           <nav className="flex items-center space-x-2 text-sm text-gray-500">

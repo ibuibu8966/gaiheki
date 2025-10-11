@@ -83,8 +83,16 @@ const AreaPartnersContent = ({ prefecture, prefectureName }: AreaPartnersContent
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen relative py-8">
+        {/* 背景画像 */}
+        <div className="fixed inset-0 z-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{backgroundImage: 'url(/page-bg.jpg)'}}
+          ></div>
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm"></div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
             <div className="text-gray-500">読み込み中...</div>
           </div>
@@ -94,8 +102,17 @@ const AreaPartnersContent = ({ prefecture, prefectureName }: AreaPartnersContent
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen relative py-8">
+      {/* 背景画像 */}
+      <div className="fixed inset-0 z-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{backgroundImage: 'url(/page-bg.jpg)'}}
+        ></div>
+        <div className="absolute inset-0 bg-white/80 backdrop-blur-sm"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* パンくずナビ */}
         <div className="mb-8">
           <Link href="/" className="inline-flex items-center text-gray-600 hover:text-orange-500 transition-colors">

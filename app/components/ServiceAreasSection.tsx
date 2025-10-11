@@ -52,26 +52,42 @@ const ServiceAreasSection = () => {
   ];
 
   return (
-    <section id="service-areas" className="bg-white py-16 px-4">
-      <div className="max-w-7xl mx-auto">
+    <section id="service-areas" className="relative py-12 md:py-20 lg:py-24 px-4 overflow-hidden">
+      {/* 背景画像 */}
+      <div className="absolute inset-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{backgroundImage: 'url(/service-areas-bg.jpg)'}}
+        ></div>
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40"></div>
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
         {/* タイトル */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">全国対応エリア</h2>
-          <p className="text-lg text-gray-600 mb-2">
+        <div className="text-center mb-10 md:mb-16">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3 animate-fadeIn drop-shadow-2xl px-4">全国対応エリア</h2>
+          <p className="text-sm md:text-base text-white/90 mb-4 md:mb-6 animate-fadeIn drop-shadow-lg px-4">
             お住まいの地域に対応した信頼できる業者をご紹介
           </p>
-          <p className="text-lg text-orange-500 font-semibold">
-            <span className="text-orange-600">北海道から沖縄まで、全国47都道府県対応</span>
-          </p>
+          <div className="inline-block bg-white/90 backdrop-blur-sm text-blue-600 px-4 md:px-6 py-2.5 md:py-3 rounded-lg font-bold text-sm md:text-base border border-white/30 animate-fadeIn shadow-lg mx-4">
+            <span className="flex items-center gap-2">
+              <svg className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+              </svg>
+              <span className="whitespace-nowrap">北海道から沖縄まで、全国47都道府県対応</span>
+            </span>
+          </div>
         </div>
 
         {/* 都道府県グリッド */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-3">
           {prefectures.map((prefecture, index) => (
             <Link
               key={index}
               href={`/areas/${prefecture.key}`}
-              className="bg-gray-100 hover:bg-orange-50 hover:text-orange-600 text-gray-700 py-3 px-4 rounded-lg text-sm font-medium transition-colors border border-gray-200 hover:border-orange-200 text-center"
+              className="group relative bg-white/50 backdrop-blur-sm hover:bg-white/70 text-slate-800 hover:text-blue-600 py-2.5 md:py-3 px-3 md:px-4 rounded-lg text-xs md:text-sm font-medium transition-all duration-300 border border-white/30 hover:border-blue-400 text-center shadow-md hover:shadow-xl animate-fadeIn"
+              style={{animationDelay: `${index * 0.02}s`}}
             >
               {prefecture.name}
             </Link>
