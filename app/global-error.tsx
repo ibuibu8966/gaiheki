@@ -8,28 +8,14 @@ export default function GlobalError({
   reset: () => void
 }) {
   return (
-    <html>
+    <html lang="ja">
       <body>
-        <div style={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '2rem'
-        }}>
-          <h2 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1rem' }}>500</h2>
-          <p style={{ fontSize: '1.25rem', marginBottom: '2rem' }}>エラーが発生しました</p>
+        <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-50">
+          <h2 className="text-5xl font-bold mb-4 text-gray-900">500</h2>
+          <p className="text-xl mb-8 text-gray-700">エラーが発生しました</p>
           <button
             onClick={() => reset()}
-            style={{
-              padding: '0.75rem 1.5rem',
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              borderRadius: '0.5rem',
-              border: 'none',
-              cursor: 'pointer'
-            }}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
           >
             再試行
           </button>
