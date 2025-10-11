@@ -295,6 +295,7 @@ const PartnerDetailContent = ({ partnerId }: PartnerDetailContentProps) => {
               <DesignatedDiagnosisForm
                 partnerId={partner.id}
                 partnerName={partner.companyName}
+                supportedPrefectures={partner.supportedPrefectures}
                 onSuccess={() => setShowDiagnosisForm(false)}
               />
             )}

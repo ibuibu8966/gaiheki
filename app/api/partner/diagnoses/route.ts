@@ -31,9 +31,19 @@ export async function GET(request: NextRequest) {
 
     const supportedPrefectures = partnerPrefectures.map(pp => pp.supported_prefecture);
 
-    // 対応エリア内の診断依頼を取得
+    // 対応エリア内の診断依頼、または自社が指定された案件を取得
     const whereCondition: any = {
-      prefecture: { in: supportedPrefectures }
+      OR: [
+        // 1. 対応エリア内の案件
+        {
+          prefecture: { in: supportedPrefectures }
+        },
+        // 2. 自社が指定業者として指定された案件（エリア外でも表示）
+        {
+          designated_partner_id: partnerId,
+          status: 'DESIGNATED'
+        }
+      ]
     };
 
     // ステータスフィルタの処理
