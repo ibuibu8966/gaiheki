@@ -1,22 +1,33 @@
 import PartnerDetailContent from "@/app/components/PartnerDetailContent";
+import { prisma } from "@/lib/prisma";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/partners/${id}`, {
-      cache: 'no-store'
-    });
-    const result = await response.json();
+    const partnerId = parseInt(id);
 
-    if (result.success) {
+    if (isNaN(partnerId)) {
+      throw new Error('Invalid partner ID');
+    }
+
+    // Query database directly for better performance and reliability
+    const partner = await prisma.partners.findUnique({
+      where: { id: partnerId },
+      include: {
+        partner_details: true
+      }
+    });
+
+    if (partner?.partner_details) {
+      const details = partner.partner_details;
       return {
-        title: `${result.data.companyName} - 外壁塗装の窓口`,
-        description: result.data.appealText.substring(0, 150),
+        title: `${details.company_name} - 外壁塗装の窓口`,
+        description: details.appeal_text?.substring(0, 150) || details.business_description?.substring(0, 150),
       };
     }
   } catch (error) {
-    console.error('Metadata fetch error:', error);
+    console.error('Metadata generation error:', error);
   }
 
   return {
