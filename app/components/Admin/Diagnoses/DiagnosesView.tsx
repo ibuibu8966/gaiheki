@@ -33,6 +33,7 @@ interface Diagnosis {
 
 // ラベル変換用マッピング
 const FLOOR_AREA_LABELS: Record<string, string> = {
+  UNKNOWN: '不明',
   UNDER_80: '80㎡未満',
   FROM_80_TO_100: '80〜100㎡',
   FROM_101_TO_120: '101〜120㎡',
@@ -42,6 +43,8 @@ const FLOOR_AREA_LABELS: Record<string, string> = {
   FROM_181_TO_200: '181〜200㎡',
   FROM_201_TO_250: '201〜250㎡',
   FROM_251_TO_300: '251〜300㎡',
+  FROM_301_TO_500: '301〜500㎡',
+  OVER_501: '501㎡以上',
   OVER_300: '300㎡以上'
 };
 
@@ -49,6 +52,7 @@ const CURRENT_SITUATION_LABELS: Record<string, string> = {
   MARKET_RESEARCH: '相場を知りたい',
   COMPARING_CONTRACTORS: '業者を比較したい',
   CONSIDERING_CONSTRUCTION: '工事を検討中',
+  CONSTRUCTION_COMPLETED: '工事完了',
   READY_TO_ORDER: 'すぐに発注したい'
 };
 
@@ -58,7 +62,8 @@ const CONSTRUCTION_TYPE_LABELS: Record<string, string> = {
   EXTERIOR_AND_ROOF: '外壁・屋根塗装',
   SIDING_REPLACEMENT: 'サイディング張替',
   WATERPROOFING: '防水工事',
-  PARTIAL_REPAIR: '部分補修'
+  PARTIAL_REPAIR: '部分補修',
+  FULL_REPLACEMENT: '全面張替'
 };
 
 const DiagnosesView = () => {

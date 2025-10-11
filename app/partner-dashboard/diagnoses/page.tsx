@@ -35,14 +35,15 @@ const CONSTRUCTION_TYPE_LABELS: Record<string, string> = {
   PARTIAL_REPAIR: "部分補修",
   WATERPROOFING: "防水工事",
   SIDING_REPLACEMENT: "サイディング張替",
-  FULL_REPLACEMENT: "全面改装"
+  FULL_REPLACEMENT: "全面張替"
 };
 
 // 現在の状況のラベルマッピング
 const CURRENT_SITUATION_LABELS: Record<string, string> = {
-  MARKET_RESEARCH: "情報収集中",
+  MARKET_RESEARCH: "相場を知りたい",
   CONSIDERING_CONSTRUCTION: "工事を検討中",
-  COMPARING_CONTRACTORS: "業者を比較中",
+  COMPARING_CONTRACTORS: "業者を比較したい",
+  CONSTRUCTION_COMPLETED: "工事完了",
   READY_TO_ORDER: "すぐに発注したい"
 };
 
