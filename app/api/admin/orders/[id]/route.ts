@@ -4,10 +4,11 @@ import { prisma } from "@/lib/prisma";
 // GET: 受注詳細取得
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const orderId = parseInt(params.id);
+    const { id } = await params;
+    const orderId = parseInt(id);
 
     if (isNaN(orderId)) {
       return NextResponse.json(
@@ -80,7 +81,6 @@ export async function GET(
       completionDate: order.completion_date?.toISOString().split("T")[0],
       evaluationToken: order.evaluation_token,
       evaluationTokenSentAt: order.evaluation_token_sent_at?.toISOString(),
-      constructionType: order.quotations.diagnosis_requests.construction_type,
       prefecture: order.quotations.diagnosis_requests.prefecture,
     };
 
@@ -104,10 +104,11 @@ export async function GET(
 // PATCH: 受注更新（ステータス、管理者メモ）
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const orderId = parseInt(params.id);
+    const { id } = await params;
+    const orderId = parseInt(id);
 
     if (isNaN(orderId)) {
       return NextResponse.json(

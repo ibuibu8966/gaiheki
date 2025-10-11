@@ -4,10 +4,10 @@ import { prisma } from "@/lib/prisma";
 // GET: トークン検証と受注情報取得
 export async function GET(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const { token } = params;
+    const { token } = await params;
 
     // トークンで受注を検索
     const order = await prisma.orders.findUnique({
@@ -89,10 +89,10 @@ export async function GET(
 // POST: 評価送信
 export async function POST(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const { token } = params;
+    const { token } = await params;
     const body = await request.json();
     const { rating, reviewTitle, review } = body;
 
