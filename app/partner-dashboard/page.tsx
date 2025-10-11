@@ -1,7 +1,14 @@
-import PartnerDashboardContent from "../components/Partner/Dashboard/PartnerDashboardContent";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function PartnerDashboardPage() {
-  return (
-    <PartnerDashboardContent />
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/partner-dashboard/diagnoses");
+  }, [router]);
+
+  return null;
 }

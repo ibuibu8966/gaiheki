@@ -1,26 +1,163 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+const PREFECTURE_MAP: Record<string, string> = {
+  Hokkaido: '北海道', Aomori: '青森県', Iwate: '岩手県', Miyagi: '宮城県',
+  Akita: '秋田県', Yamagata: '山形県', Fukushima: '福島県', Ibaraki: '茨城県',
+  Tochigi: '栃木県', Gunma: '群馬県', Saitama: '埼玉県', Chiba: '千葉県',
+  Tokyo: '東京都', Kanagawa: '神奈川県', Niigata: '新潟県', Toyama: '富山県',
+  Ishikawa: '石川県', Fukui: '福井県', Yamanashi: '山梨県', Nagano: '長野県',
+  Gifu: '岐阜県', Shizuoka: '静岡県', Aichi: '愛知県', Mie: '三重県',
+  Shiga: '滋賀県', Kyoto: '京都府', Osaka: '大阪府', Hyogo: '兵庫県',
+  Nara: '奈良県', Wakayama: '和歌山県', Tottori: '鳥取県', Shimane: '島根県',
+  Okayama: '岡山県', Hiroshima: '広島県', Yamaguchi: '山口県', Tokushima: '徳島県',
+  Kagawa: '香川県', Ehime: '愛媛県', Kochi: '高知県', Fukuoka: '福岡県',
+  Saga: '佐賀県', Nagasaki: '長崎県', Kumamoto: '熊本県', Oita: '大分県',
+  Miyazaki: '宮崎県', Kagoshima: '鹿児島県', Okinawa: '沖縄県'
+};
+
+const PREFECTURES = Object.keys(PREFECTURE_MAP);
 
 export default function ProfilePage() {
-  const [companyInfo] = useState({
-    companyName: "株式会社山田塗装",
-    representativeName: "山田太郎",
-    email: "info@yamada-tosou.co.jp",
-    phone: "03-1234-5678",
-    fax: "03-1234-5679",
-    website: "https://yamada-tosou.co.jp",
-    address: "東京都渋谷区渋谷1-1-1ビル3F",
-    businessHours: "平日 8:00-18:00 / 土曜 8:00-17:00",
-    holidays: "日曜・祝日・年末年始",
-    businessContent: "外壁塗装、屋根塗装、防水工事を専門とする総合塗装業。戸建住宅から大型建築物まで幅広く対応し、高品質な素材と熟練の技術で長期保証を提供しています。",
-    appeal: "創業30年の実績と信頼。お客様満足度95%以上を誇る外壁塗装専門店です。地域密着のサービスで、アフターフォローも万全です。",
-    loginEmail: "admin@yamada-tosou.co.jp",
-    rating: 4.5,
-    reviewCount: 128,
-    workCount: 450,
-    serviceAreas: ["東京都", "神奈川県", "埼玉県"]
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [formData, setFormData] = useState({
+    companyName: "",
+    representativeName: "",
+    phone: "",
+    fax: "",
+    website: "",
+    address: "",
+    businessHours: "",
+    holidays: "",
+    businessContent: "",
+    appeal: "",
+    loginEmail: "",
+    newPassword: "",
+    confirmPassword: "",
+    serviceAreas: [] as string[]
   });
+
+  const [stats, setStats] = useState({
+    rating: 0,
+    reviewCount: 0,
+    workCount: 0
+  });
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/partner/profile');
+      const data = await response.json();
+
+      if (data.success) {
+        const profile = data.data;
+        setFormData({
+          companyName: profile.companyName,
+          representativeName: profile.representativeName,
+          phone: profile.phone,
+          fax: profile.fax,
+          website: profile.website,
+          address: profile.address,
+          businessHours: profile.businessHours,
+          holidays: profile.holidays,
+          businessContent: profile.businessContent,
+          appeal: profile.appeal,
+          loginEmail: profile.loginEmail,
+          newPassword: "",
+          confirmPassword: "",
+          serviceAreas: profile.serviceAreas
+        });
+
+        setStats({
+          rating: profile.rating,
+          reviewCount: profile.reviewCount,
+          workCount: profile.workCount
+        });
+      } else {
+        alert(data.error || 'プロフィール情報の取得に失敗しました');
+      }
+    } catch (error) {
+      console.error('Profile fetch error:', error);
+      alert('プロフィール情報の取得に失敗しました');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    // パスワード確認
+    if (formData.newPassword && formData.newPassword !== formData.confirmPassword) {
+      alert('パスワードが一致しません');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const response = await fetch('/api/partner/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          companyName: formData.companyName,
+          representativeName: formData.representativeName,
+          phone: formData.phone,
+          fax: formData.fax,
+          website: formData.website,
+          address: formData.address,
+          businessHours: formData.businessHours,
+          holidays: formData.holidays,
+          businessContent: formData.businessContent,
+          appeal: formData.appeal,
+          loginEmail: formData.loginEmail,
+          newPassword: formData.newPassword,
+          serviceAreas: formData.serviceAreas
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('会社情報を更新しました');
+        setIsEditMode(false);
+        setFormData(prev => ({
+          ...prev,
+          newPassword: "",
+          confirmPassword: ""
+        }));
+        await fetchProfile();
+      } else {
+        alert(data.error || '更新に失敗しました');
+      }
+    } catch (error) {
+      console.error('Save error:', error);
+      alert('更新に失敗しました');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const togglePrefecture = (prefEn: string) => {
+    setFormData(prev => ({
+      ...prev,
+      serviceAreas: prev.serviceAreas.includes(prefEn)
+        ? prev.serviceAreas.filter(p => p !== prefEn)
+        : [...prev.serviceAreas, prefEn]
+    }));
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -30,80 +167,193 @@ export default function ProfilePage() {
             <h2 className="text-2xl font-bold text-gray-900">会社情報</h2>
             <p className="text-gray-600 mt-2">お客様に表示される会社情報を管理できます。</p>
           </div>
-          <button className="bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-700">
-            編集
-          </button>
+          {!isEditMode ? (
+            <button
+              onClick={() => setIsEditMode(true)}
+              className="bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-700"
+            >
+              編集
+            </button>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setIsEditMode(false);
+                  fetchProfile();
+                }}
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-400"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+              >
+                {saving ? '保存中...' : '保存'}
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* 基本情報 */}
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center mb-4">
-                <svg className="w-5 h-5 mr-2 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-                <h3 className="font-medium text-gray-900">基本情報</h3>
-              </div>
-
+              <h3 className="font-medium text-gray-900 mb-4">基本情報</h3>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">会社名</label>
-                    <div className="text-gray-900">{companyInfo.companyName}</div>
+                    <label className="block text-sm text-gray-700 font-medium mb-1">会社名</label>
+                    {isEditMode ? (
+                      <input
+                        type="text"
+                        value={formData.companyName}
+                        onChange={(e) => setFormData({...formData, companyName: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                      />
+                    ) : (
+                      <div className="text-gray-900">{formData.companyName}</div>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">代表者名</label>
-                    <div className="text-gray-900">{companyInfo.representativeName}</div>
+                    <label className="block text-sm text-gray-700 font-medium mb-1">代表者名</label>
+                    {isEditMode ? (
+                      <input
+                        type="text"
+                        value={formData.representativeName}
+                        onChange={(e) => setFormData({...formData, representativeName: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                      />
+                    ) : (
+                      <div className="text-gray-900">{formData.representativeName}</div>
+                    )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">メールアドレス</label>
-                    <div className="text-gray-900">{companyInfo.email}</div>
+                    <label className="block text-sm text-gray-700 font-medium mb-1">
+                      メールアドレス
+                      <span className="ml-2 text-xs text-gray-500">(ログインメールと同じ)</span>
+                    </label>
+                    <div className="text-gray-900 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md">
+                      {formData.loginEmail}
+                    </div>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">電話番号</label>
-                    <div className="text-gray-900">{companyInfo.phone}</div>
+                    <label className="block text-sm text-gray-700 font-medium mb-1">電話番号</label>
+                    {isEditMode ? (
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                      />
+                    ) : (
+                      <div className="text-gray-900">{formData.phone}</div>
+                    )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">FAX番号</label>
-                    <div className="text-gray-900">{companyInfo.fax}</div>
+                    <label className="block text-sm text-gray-700 font-medium mb-1">FAX番号</label>
+                    {isEditMode ? (
+                      <input
+                        type="tel"
+                        value={formData.fax}
+                        onChange={(e) => setFormData({...formData, fax: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                      />
+                    ) : (
+                      <div className="text-gray-900">{formData.fax}</div>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">ウェブサイト</label>
-                    <div className="text-blue-600">{companyInfo.website}</div>
+                    <label className="block text-sm text-gray-700 font-medium mb-1">ウェブサイト</label>
+                    {isEditMode ? (
+                      <input
+                        type="url"
+                        value={formData.website}
+                        onChange={(e) => setFormData({...formData, website: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                      />
+                    ) : (
+                      <div className="text-blue-600">{formData.website}</div>
+                    )}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">住所</label>
-                  <div className="text-gray-900">{companyInfo.address}</div>
+                  <label className="block text-sm text-gray-700 font-medium mb-1">住所</label>
+                  {isEditMode ? (
+                    <input
+                      type="text"
+                      value={formData.address}
+                      onChange={(e) => setFormData({...formData, address: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                    />
+                  ) : (
+                    <div className="text-gray-900">{formData.address}</div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">営業時間</label>
-                    <div className="text-gray-900">{companyInfo.businessHours}</div>
+                    <label className="block text-sm text-gray-700 font-medium mb-1">営業時間</label>
+                    {isEditMode ? (
+                      <input
+                        type="text"
+                        value={formData.businessHours}
+                        onChange={(e) => setFormData({...formData, businessHours: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                      />
+                    ) : (
+                      <div className="text-gray-900">{formData.businessHours}</div>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">定休日</label>
-                    <div className="text-gray-900">{companyInfo.holidays}</div>
+                    <label className="block text-sm text-gray-700 font-medium mb-1">定休日</label>
+                    {isEditMode ? (
+                      <input
+                        type="text"
+                        value={formData.holidays}
+                        onChange={(e) => setFormData({...formData, holidays: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                      />
+                    ) : (
+                      <div className="text-gray-900">{formData.holidays}</div>
+                    )}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">事業内容</label>
-                  <div className="text-gray-900">{companyInfo.businessContent}</div>
+                  <label className="block text-sm text-gray-700 font-medium mb-1">事業内容</label>
+                  {isEditMode ? (
+                    <textarea
+                      value={formData.businessContent}
+                      onChange={(e) => setFormData({...formData, businessContent: e.target.value})}
+                      rows={4}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                    />
+                  ) : (
+                    <div className="text-gray-900">{formData.businessContent}</div>
+                  )}
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">アピール文章</label>
-                  <div className="text-gray-900">{companyInfo.appeal}</div>
+                  <label className="block text-sm text-gray-700 font-medium mb-1">アピール文章</label>
+                  {isEditMode ? (
+                    <textarea
+                      value={formData.appeal}
+                      onChange={(e) => setFormData({...formData, appeal: e.target.value})}
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                    />
+                  ) : (
+                    <div className="text-gray-900">{formData.appeal}</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -111,9 +361,44 @@ export default function ProfilePage() {
             {/* ログイン情報 */}
             <div className="bg-white rounded-lg shadow p-6">
               <h3 className="font-medium text-gray-900 mb-4">ログイン情報</h3>
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">ログインメールアドレス</label>
-                <div className="text-gray-900">{companyInfo.loginEmail}</div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm text-gray-700 font-medium mb-1">ログインメールアドレス</label>
+                  {isEditMode ? (
+                    <input
+                      type="email"
+                      value={formData.loginEmail}
+                      onChange={(e) => setFormData({...formData, loginEmail: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                    />
+                  ) : (
+                    <div className="text-gray-900">{formData.loginEmail}</div>
+                  )}
+                </div>
+                {isEditMode && (
+                  <>
+                    <div>
+                      <label className="block text-sm text-gray-700 font-medium mb-1">新しいパスワード</label>
+                      <input
+                        type="password"
+                        value={formData.newPassword}
+                        onChange={(e) => setFormData({...formData, newPassword: e.target.value})}
+                        placeholder="変更する場合のみ入力"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-700 font-medium mb-1">パスワード確認</label>
+                      <input
+                        type="password"
+                        value={formData.confirmPassword}
+                        onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                        placeholder="パスワードを再入力"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -122,43 +407,50 @@ export default function ProfilePage() {
           <div className="space-y-6">
             {/* 実績・評価 */}
             <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center mb-4">
-                <svg className="w-5 h-5 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                </svg>
-                <h3 className="font-medium text-gray-900">実績・評価</h3>
-              </div>
-
+              <h3 className="font-medium text-gray-900 mb-4">実績・評価</h3>
               <div className="text-center mb-4">
-                <div className="text-3xl font-bold text-orange-500">{companyInfo.rating}</div>
+                <div className="text-3xl font-bold text-orange-500">{stats.rating.toFixed(1)}</div>
                 <div className="flex justify-center items-center mb-2">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <svg key={star} className={`w-4 h-4 ${star <= Math.floor(companyInfo.rating) ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 24 24">
+                    <svg key={star} className={`w-4 h-4 ${star <= Math.floor(stats.rating) ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 24 24">
                       <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                     </svg>
                   ))}
                 </div>
-                <div className="text-sm text-gray-600">{companyInfo.reviewCount}件のレビュー</div>
+                <div className="text-sm text-gray-600">{stats.reviewCount}件のレビュー</div>
               </div>
-
-              <div className="space-y-3">
-                <div className="text-center">
-                  <div className="text-xl font-bold text-gray-900">{companyInfo.workCount}件</div>
-                  <div className="text-sm text-gray-600">施工実績</div>
-                </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-gray-900">{stats.workCount}件</div>
+                <div className="text-sm text-gray-600">施工実績</div>
               </div>
             </div>
 
             {/* 対応エリア */}
             <div className="bg-white rounded-lg shadow p-6">
               <h3 className="font-medium text-gray-900 mb-4">対応エリア</h3>
-              <div className="flex flex-wrap gap-2">
-                {companyInfo.serviceAreas.map((area) => (
-                  <span key={area} className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
-                    {area}
-                  </span>
-                ))}
-              </div>
+              {isEditMode ? (
+                <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
+                  {PREFECTURES.map(prefEn => (
+                    <label key={prefEn} className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.serviceAreas.includes(prefEn)}
+                        onChange={() => togglePrefecture(prefEn)}
+                        className="rounded border-gray-300 text-blue-600"
+                      />
+                      <span className="text-sm text-gray-900">{PREFECTURE_MAP[prefEn]}</span>
+                    </label>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {formData.serviceAreas.map(prefEn => (
+                    <span key={prefEn} className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                      {PREFECTURE_MAP[prefEn]}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

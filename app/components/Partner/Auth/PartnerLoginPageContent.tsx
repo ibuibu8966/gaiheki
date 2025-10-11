@@ -20,14 +20,38 @@ const PartnerLoginPageContent = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // デモ用ログイン認証
-    if (loginData.email === "partner@example.com" && loginData.password === "partner123") {
-      // 加盟店ダッシュボードへリダイレクト
-      router.push("/partner-dashboard");
-    } else {
-      alert("ログイン情報が正しくありません。\nデモ用ログイン情報:\nメール: partner@example.com\nパスワード: partner123");
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/partner/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: loginData.email,
+          password: loginData.password
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // ログイン成功
+        // TODO: セッション情報を保存
+        router.push("/partner-dashboard");
+      } else {
+        alert(data.error || 'ログインに失敗しました');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('ログイン処理中にエラーが発生しました');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -98,9 +122,10 @@ const PartnerLoginPageContent = () => {
             {/* ログインボタン */}
             <button
               type="submit"
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-md transition-colors"
+              disabled={isLoading}
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              ログイン
+              {isLoading ? 'ログイン中...' : 'ログイン'}
             </button>
 
             {/* または */}
@@ -117,18 +142,9 @@ const PartnerLoginPageContent = () => {
             </Link>
           </form>
 
-          {/* デモ用ログイン情報（隠しエリア） */}
-          <div className="mt-6 p-4 bg-orange-50 border border-orange-200 rounded-md">
-            <h3 className="font-medium text-orange-800 mb-2">デモ用ログイン情報:</h3>
-            <p className="text-sm text-orange-700">メール: partner@example.com</p>
-            <p className="text-sm text-orange-700">パスワード: partner123</p>
-            <button
-              type="button"
-              onClick={() => setLoginData({ email: "partner@example.com", password: "partner123" })}
-              className="text-xs text-orange-600 hover:text-orange-800 underline mt-1"
-            >
-              デモ情報を入力
-            </button>
+          {/* ヘルプテキスト */}
+          <div className="mt-6 text-center text-sm text-gray-600">
+            <p>ログインに関するお問い合わせは、管理者までご連絡ください。</p>
           </div>
         </div>
       </div>

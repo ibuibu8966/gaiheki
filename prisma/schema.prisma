@@ -119,20 +119,35 @@ model inquiries {
 }
 
 model orders {
-  id                       Int         @id @default(autoincrement())
-  quotation_id             Int         @unique
+  id                       Int            @id @default(autoincrement())
+  quotation_id             Int            @unique
   partner_memo             String?
   admin_memo               String?
-  construction_start_date  DateTime?   @db.Date
-  construction_end_date    DateTime?   @db.Date
-  order_status             OrderStatus @default(ORDERED)
-  order_date               DateTime    @default(now())
+  construction_amount      Int?
+  construction_start_date  DateTime?      @db.Date
+  construction_end_date    DateTime?      @db.Date
+  order_status             OrderStatus    @default(ORDERED)
+  order_date               DateTime       @default(now())
   completion_date          DateTime?
-  evaluation_token         String?     @unique @db.VarChar(100)
+  evaluation_token         String?        @unique @db.VarChar(100)
   evaluation_token_sent_at DateTime?
-  created_at               DateTime    @default(now())
+  created_at               DateTime       @default(now())
   updated_at               DateTime
-  quotations               quotations  @relation(fields: [quotation_id], references: [id])
+  quotations               quotations     @relation(fields: [quotation_id], references: [id])
+  order_photos             order_photos[]
+}
+
+model order_photos {
+  id          Int      @id @default(autoincrement())
+  order_id    Int
+  photo_url   String   @db.VarChar(500)
+  photo_type  String?  @db.VarChar(50)
+  description String?  @db.VarChar(200)
+  uploaded_at DateTime @default(now())
+  created_at  DateTime @default(now())
+  orders      orders   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+
+  @@index([order_id])
 }
 
 model partner_application_prefectures {

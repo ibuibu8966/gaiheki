@@ -25,6 +25,8 @@
     "@prisma/client": "^6.14.0",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
+    "iron-session": "^8.0.4",
+    "jose": "^6.1.0",
     "jsonwebtoken": "^9.0.2",
     "next": "15.4.6",
     "prisma": "^6.14.0",
