@@ -37,7 +37,13 @@ export default function ProfilePage() {
     loginEmail: "",
     newPassword: "",
     confirmPassword: "",
-    serviceAreas: [] as string[]
+    serviceAreas: [] as string[],
+    invoiceRegistrationNumber: "",
+    bankName: "",
+    bankBranchName: "",
+    bankAccountType: "",
+    bankAccountNumber: "",
+    bankAccountHolder: ""
   });
 
   const [stats, setStats] = useState({
@@ -72,7 +78,13 @@ export default function ProfilePage() {
           loginEmail: profile.loginEmail,
           newPassword: "",
           confirmPassword: "",
-          serviceAreas: profile.serviceAreas
+          serviceAreas: profile.serviceAreas,
+          invoiceRegistrationNumber: profile.invoiceRegistrationNumber || "",
+          bankName: profile.bankName || "",
+          bankBranchName: profile.bankBranchName || "",
+          bankAccountType: profile.bankAccountType || "",
+          bankAccountNumber: profile.bankAccountNumber || "",
+          bankAccountHolder: profile.bankAccountHolder || ""
         });
 
         setStats({
@@ -116,7 +128,13 @@ export default function ProfilePage() {
           appeal: formData.appeal,
           loginEmail: formData.loginEmail,
           newPassword: formData.newPassword,
-          serviceAreas: formData.serviceAreas
+          serviceAreas: formData.serviceAreas,
+          invoiceRegistrationNumber: formData.invoiceRegistrationNumber,
+          bankName: formData.bankName,
+          bankBranchName: formData.bankBranchName,
+          bankAccountType: formData.bankAccountType,
+          bankAccountNumber: formData.bankAccountNumber,
+          bankAccountHolder: formData.bankAccountHolder
         })
       });
 
@@ -399,6 +417,114 @@ export default function ProfilePage() {
                     </div>
                   </>
                 )}
+              </div>
+            </div>
+
+            {/* 請求書情報 */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h3 className="font-medium text-gray-900 mb-4">請求書情報</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm text-gray-700 font-medium mb-1">
+                    インボイス登録番号
+                    <span className="ml-2 text-xs text-gray-500">(適格請求書発行事業者登録番号)</span>
+                  </label>
+                  {isEditMode ? (
+                    <input
+                      type="text"
+                      value={formData.invoiceRegistrationNumber}
+                      onChange={(e) => setFormData({...formData, invoiceRegistrationNumber: e.target.value})}
+                      placeholder="T1234567890123"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                    />
+                  ) : (
+                    <div className="text-gray-900">{formData.invoiceRegistrationNumber || '未設定'}</div>
+                  )}
+                </div>
+
+                <div className="border-t pt-4">
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">振込口座情報</h4>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm text-gray-700 font-medium mb-1">銀行名</label>
+                        {isEditMode ? (
+                          <input
+                            type="text"
+                            value={formData.bankName}
+                            onChange={(e) => setFormData({...formData, bankName: e.target.value})}
+                            placeholder="例: 三菱UFJ銀行"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                          />
+                        ) : (
+                          <div className="text-gray-900">{formData.bankName || '未設定'}</div>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-700 font-medium mb-1">支店名</label>
+                        {isEditMode ? (
+                          <input
+                            type="text"
+                            value={formData.bankBranchName}
+                            onChange={(e) => setFormData({...formData, bankBranchName: e.target.value})}
+                            placeholder="例: 新宿支店"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                          />
+                        ) : (
+                          <div className="text-gray-900">{formData.bankBranchName || '未設定'}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm text-gray-700 font-medium mb-1">口座種別</label>
+                        {isEditMode ? (
+                          <select
+                            value={formData.bankAccountType}
+                            onChange={(e) => setFormData({...formData, bankAccountType: e.target.value})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                          >
+                            <option value="">選択してください</option>
+                            <option value="普通">普通</option>
+                            <option value="当座">当座</option>
+                          </select>
+                        ) : (
+                          <div className="text-gray-900">{formData.bankAccountType || '未設定'}</div>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-700 font-medium mb-1">口座番号</label>
+                        {isEditMode ? (
+                          <input
+                            type="text"
+                            value={formData.bankAccountNumber}
+                            onChange={(e) => setFormData({...formData, bankAccountNumber: e.target.value})}
+                            placeholder="1234567"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                          />
+                        ) : (
+                          <div className="text-gray-900">{formData.bankAccountNumber || '未設定'}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-gray-700 font-medium mb-1">口座名義</label>
+                      {isEditMode ? (
+                        <input
+                          type="text"
+                          value={formData.bankAccountHolder}
+                          onChange={(e) => setFormData({...formData, bankAccountHolder: e.target.value})}
+                          placeholder="カ）ヤマダトソウ"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                        />
+                      ) : (
+                        <div className="text-gray-900">{formData.bankAccountHolder || '未設定'}</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

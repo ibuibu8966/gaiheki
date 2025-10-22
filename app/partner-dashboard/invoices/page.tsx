@@ -15,9 +15,9 @@ interface CustomerInvoice {
   status: string;
   payment_date: string | null;
   order: {
-    quotation: {
-      diagnosis_request: {
-        customer: {
+    quotations: {
+      diagnosis_requests: {
+        customers: {
           customer_name: string;
         };
       };
@@ -37,8 +37,12 @@ export default function PartnerInvoicesPage() {
     try {
       const response = await fetch('/api/partner/invoices');
       if (response.ok) {
-        const data = await response.json();
-        setInvoices(data);
+        const result = await response.json();
+        if (result.success && result.data) {
+          setInvoices(result.data.invoices || []);
+        } else {
+          setInvoices([]);
+        }
       }
     } catch (error) {
       console.error('Error fetching invoices:', error);
@@ -142,7 +146,7 @@ export default function PartnerInvoicesPage() {
                     {invoice.invoice_number}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {invoice.order.quotation.diagnosis_request.customer.customer_name}
+                    {invoice.order.quotations.diagnosis_requests.customers.customer_name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {new Date(invoice.issue_date).toLocaleDateString('ja-JP')}
