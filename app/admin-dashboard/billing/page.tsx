@@ -282,7 +282,19 @@ export default function BillingManagementPage() {
       CANCELLED: 'キャンセル',
     };
 
-    return <Badge variant={variants[status] || 'default'}>{labels[status] || status}</Badge>;
+    const customClasses: { [key: string]: string } = {
+      UNPAID: 'border-orange-500 text-orange-700 bg-orange-50',
+      CANCELLED: 'border-gray-400 text-gray-700 bg-gray-50',
+    };
+
+    return (
+      <Badge
+        variant={variants[status] || 'default'}
+        className={customClasses[status] || ''}
+      >
+        {labels[status] || status}
+      </Badge>
+    );
   };
 
   const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
@@ -396,7 +408,7 @@ export default function BillingManagementPage() {
                       onClick={handleIssueSelected}
                       disabled={selectedInvoiceIds.length === 0}
                       variant="outline"
-                      className="border-gray-300 hover:bg-gray-50"
+                      className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-white"
                     >
                       選択したものを発行
                     </Button>
@@ -514,6 +526,7 @@ export default function BillingManagementPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => router.push(`/admin-dashboard/billing/${invoice.id}`)}
+                              className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-white"
                             >
                               詳細
                             </Button>
