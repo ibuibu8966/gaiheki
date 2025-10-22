@@ -1,80 +1,64 @@
 const AboutServiceSection = () => {
   return (
-    <section className="bg-orange-600 text-white py-16 px-4">
+    <section className="relative bg-white py-12 md:py-20 lg:py-24 px-4">
       <div className="max-w-7xl mx-auto">
         {/* タイトル */}
-        <div className="text-center mb-12">
-          <p className="text-sm uppercase tracking-wide mb-2 opacity-90">About Service</p>
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">外壁塗装の窓口について</h2>
-          <div className="max-w-4xl mx-auto">
-            <p className="text-lg mb-2">全国3,500社以上の厳選された建築専門業者とパートナーシップを構築し、</p>
-            <p className="text-lg">完全中立の立場からお客様の条件に最適な施工会社を無料でご紹介する専門サービスです。</p>
+        <div className="text-center mb-10 md:mb-16">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-4 px-2">
+            業界の"常識"を変える、透明なプラットフォーム
+          </h2>
+        </div>
+
+        {/* メインコンテンツ */}
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-10 lg:gap-12 items-center mb-16">
+          {/* 左側：画像 */}
+          <div className="relative order-1">
+            <div
+              className="w-full h-[300px] md:h-[400px] lg:h-[500px] bg-cover bg-center bg-no-repeat rounded-xl shadow-xl"
+              style={{backgroundImage: 'url(/about-service-bg.jpg)'}}
+            ></div>
+          </div>
+
+          {/* 右側：カード */}
+          <div className="space-y-4 md:space-y-5 order-2">
+            {/* カード1 */}
+            <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6 lg:p-8 shadow-sm hover:shadow-md transition-all duration-300">
+              <h4 className="text-base md:text-lg font-bold text-slate-900 mb-3 md:mb-4">紹介だけで費用がかかる仕組みをやめました</h4>
+              <p className="text-xs md:text-sm text-slate-700 leading-relaxed mb-3 md:mb-4">
+                一般的な見積サイトでは、受注が決まる前の"紹介"だけで、施工会社→紹介元へ数万円〜十数万円の手数料が発生し、見積りに価格転嫁されがち。私たちはこの前提を見直しています。
+              </p>
+              <div className="space-y-1.5 md:space-y-2">
+                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-blue-600">だから安心：</span>手数料都合の押し込みが起きにくく、納得いくまで比較できる。</p>
+                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-blue-600">だから安い：</span>余計な紹介コストが乗りにくく、見積りが適正価格に近づく。</p>
+              </div>
+            </div>
+
+            {/* カード2 */}
+            <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6 lg:p-8 shadow-sm hover:shadow-md transition-all duration-300">
+              <h4 className="text-base md:text-lg font-bold text-slate-900 mb-3 md:mb-4">"多重下請け"で間を抜かれない、施工店と直結</h4>
+              <p className="text-xs md:text-sm text-slate-700 leading-relaxed mb-3 md:mb-4">
+                何社も通して仕事が下ろされると、途中で中間マージンが差し引かれ、いわゆる<span className="font-bold">"間を抜かれる"</span>状態に。私たちは<span className="font-bold">一次施工店と直接</span>つながる前提で、価格と責任の見通しを良くします。
+              </p>
+              <div className="space-y-1.5 md:space-y-2">
+                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-blue-600">だから安心：</span>誰が工事するか、責任の所在と品質が明確。</p>
+                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-blue-600">だから安い：</span>中間マージンを最小化し、同じ予算でも材料・手間に再配分できる。</p>
+              </div>
+            </div>
+
+            {/* カード3 */}
+            <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6 lg:p-8 shadow-sm hover:shadow-md transition-all duration-300">
+              <h4 className="text-base md:text-lg font-bold text-slate-900 mb-3 md:mb-4">一度の入力で複数社、内訳まで横並び比較</h4>
+              <p className="text-xs md:text-sm text-slate-700 leading-relaxed mb-3 md:mb-4">
+                条件入力は1回。下地補修、塗料グレード、足場、保証などを同一フォーマットで見比べられます。
+              </p>
+              <div className="space-y-1.5 md:space-y-2">
+                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-blue-600">だから安心：</span><span className="font-bold">"なぜ安い／高い"</span>が内訳で分かり、納得して選べる。</p>
+                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-blue-600">だから安い：</span>同一条件の健全な競争で、相場から外れた高値を避けやすい。</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* 3つのカード */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {/* お客様カード */}
-          <div className="bg-white bg-opacity-90 text-gray-800 rounded-lg p-6 text-center">
-            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold mb-3">お客様</h3>
-            <p className="text-sm mb-2">外壁の悩みを相談したい</p>
-            <p className="text-sm">適切な見積もりを比較したい</p>
-          </div>
-
-          {/* 外壁塗装の窓口カード */}
-          <div className="bg-white bg-opacity-90 text-gray-800 rounded-lg p-6 text-center relative">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-700 text-white text-xs px-3 py-1 rounded-full">
-              外壁塗装の窓口
-            </div>
-            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 mt-4">
-              <svg className="w-6 h-6 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center">
-                <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                専門アドバイザーによる無料相談
-              </div>
-              <div className="flex items-center">
-                <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                厳選された優良業者のみご紹介
-              </div>
-              <div className="flex items-center">
-                <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                最大3社まで一括見積もり対応
-              </div>
-            </div>
-          </div>
-
-          {/* 認定パートナー業者カード */}
-          <div className="bg-white bg-opacity-90 text-gray-800 rounded-lg p-6 text-center">
-            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold mb-3">認定パートナー業者</h3>
-          </div>
-        </div>
-
-        {/* 底部のメッセージ */}
-        <div className="text-center">
-          <p className="text-lg opacity-90">
-            品質重視の外壁塗装を、透明性のある適正価格でお届けします
-          </p>
-        </div>
       </div>
     </section>
   );

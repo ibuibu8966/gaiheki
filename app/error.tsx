@@ -15,40 +15,19 @@ export default function Error({
   }, [error])
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '2rem'
-    }}>
-      <h2 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1rem' }}>500</h2>
-      <p style={{ fontSize: '1.25rem', marginBottom: '2rem' }}>エラーが発生しました</p>
-      <div style={{ display: 'flex', gap: '1rem' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-50">
+      <h2 className="text-5xl font-bold mb-4 text-gray-900">500</h2>
+      <p className="text-xl mb-8 text-gray-700">エラーが発生しました</p>
+      <div className="flex gap-4">
         <button
           onClick={() => reset()}
-          style={{
-            padding: '0.75rem 1.5rem',
-            backgroundColor: '#3b82f6',
-            color: 'white',
-            borderRadius: '0.5rem',
-            border: 'none',
-            cursor: 'pointer'
-          }}
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           再試行
         </button>
         <Link
           href="/"
-          style={{
-            padding: '0.75rem 1.5rem',
-            backgroundColor: '#6b7280',
-            color: 'white',
-            borderRadius: '0.5rem',
-            textDecoration: 'none',
-            display: 'inline-block'
-          }}
+          className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
         >
           ホームに戻る
         </Link>

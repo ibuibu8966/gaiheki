@@ -33,34 +33,31 @@ const FAQSection = () => {
   };
 
   return (
-    <section className="bg-white py-16 px-4">
-      <div className="max-w-4xl mx-auto">
+    <section className="relative bg-white py-24 px-4">
+      <div className="max-w-3xl mx-auto relative z-10">
         {/* タイトル */}
-        <div className="mb-12">
-          <div className="border-l-4 border-orange-500 pl-4 mb-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800">よくある質問</h2>
-          </div>
-          <p className="text-lg text-gray-600">
-            外壁塗装の窓口のよくある質問についてお答えします
-          </p>
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3 animate-fadeIn">
+            よくある質問
+          </h2>
         </div>
 
         {/* FAQ リスト */}
         <div className="space-y-4">
           {faqs.map((faq, index) => (
-            <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
+            <div key={index} className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-300 animate-fadeIn" style={{animationDelay: `${index * 0.05}s`}}>
               <button
                 onClick={() => toggleFAQ(index)}
-                className="w-full px-6 py-4 text-left bg-orange-50 hover:bg-orange-100 transition-colors flex items-center justify-between"
+                className="w-full px-6 py-5 text-left hover:bg-slate-50 transition-all duration-300 flex items-center justify-between"
               >
-                <div className="flex items-center">
-                  <span className="bg-orange-500 text-white text-sm font-bold px-2 py-1 rounded mr-4">
+                <div className="flex items-center gap-4">
+                  <span className="bg-blue-600 text-white text-sm font-bold px-3 py-1.5 rounded-lg">
                     Q
                   </span>
-                  <span className="font-medium text-gray-800">{faq.question}</span>
+                  <span className="font-bold text-slate-900">{faq.question}</span>
                 </div>
                 <svg
-                  className={`w-5 h-5 text-gray-500 transition-transform ${
+                  className={`w-5 h-5 text-slate-400 transition-transform duration-300 flex-shrink-0 ${
                     openIndex === index ? "transform rotate-180" : ""
                   }`}
                   fill="none"
@@ -71,12 +68,12 @@ const FAQSection = () => {
                 </svg>
               </button>
               {openIndex === index && (
-                <div className="px-6 py-4 bg-white border-t border-gray-100">
-                  <div className="flex">
-                    <span className="bg-gray-500 text-white text-sm font-bold px-2 py-1 rounded mr-4 flex-shrink-0">
+                <div className="px-6 py-5 bg-slate-50 border-t border-slate-200 animate-fadeIn">
+                  <div className="flex gap-4">
+                    <span className="bg-slate-700 text-white text-sm font-bold px-3 py-1.5 rounded-lg flex-shrink-0">
                       A
                     </span>
-                    <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                    <p className="text-slate-700 leading-relaxed">{faq.answer}</p>
                   </div>
                 </div>
               )}

@@ -5,10 +5,11 @@ import { useState } from "react";
 interface DesignatedDiagnosisFormProps {
   partnerId: number;
   partnerName: string;
+  supportedPrefectures?: string[]; // 対応エリアのリスト（英語の都道府県コード）
   onSuccess?: () => void;
 }
 
-const DesignatedDiagnosisForm = ({ partnerId, partnerName, onSuccess }: DesignatedDiagnosisFormProps) => {
+const DesignatedDiagnosisForm = ({ partnerId, partnerName, supportedPrefectures, onSuccess }: DesignatedDiagnosisFormProps) => {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -188,12 +189,19 @@ const DesignatedDiagnosisForm = ({ partnerId, partnerName, onSuccess }: Designat
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
           >
             <option value="">選択してください</option>
-            {prefectures.map((pref) => (
-              <option key={pref.value} value={pref.value}>
-                {pref.name}
-              </option>
-            ))}
+            {prefectures
+              .filter(pref => !supportedPrefectures || supportedPrefectures.length === 0 || supportedPrefectures.includes(pref.value))
+              .map((pref) => (
+                <option key={pref.value} value={pref.value}>
+                  {pref.name}
+                </option>
+              ))}
           </select>
+          {supportedPrefectures && supportedPrefectures.length > 0 && (
+            <p className="mt-1 text-xs text-gray-500">
+              ※ この業者の対応エリアのみ表示しています
+            </p>
+          )}
         </div>
 
         {/* 延床面積 */}

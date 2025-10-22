@@ -58,23 +58,36 @@ const DiagnosisForm = () => {
   };
 
   return (
-    <section id="diagnosis-form" className="bg-white py-16 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* タイトル */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">今すぐ無料診断</h2>
-          <p className="text-lg text-gray-600">
-            簡単な質問にお答えいただくだけで、最適な業者をご紹介します
-          </p>
-        </div>
+    <section id="diagnosis-form" className="relative bg-white py-12 md:py-20 lg:py-24 px-4">
+      <div className="max-w-4xl mx-auto relative z-10">
+        {/* フォームカード */}
+        <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+          {/* カード内の背景画像 */}
+          <div className="absolute inset-0">
+            <div
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              style={{backgroundImage: 'url(/diagnosis-bg.png)'}}
+            ></div>
+            <div className="absolute inset-0 bg-black/50"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/40"></div>
+          </div>
 
-        {/* フォーム */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
+          {/* カード内コンテンツ */}
+          <div className="relative z-10 p-6 md:p-10 lg:p-12">
+            {/* タイトル */}
+            <div className="text-center mb-8 md:mb-10 animate-fadeIn">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3 drop-shadow-2xl px-2">今すぐ無料診断</h2>
+              <p className="text-sm md:text-base text-white/90 drop-shadow-lg px-2">
+                簡単な質問にお答えいただくだけで、最適な業者をご紹介します
+              </p>
+            </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
+          <div className="grid md:grid-cols-2 gap-4 md:gap-6">
             {/* お名前 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                お名前 <span className="text-red-500 text-xs">*</span>
+            <div className="group">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                お名前 <span className="text-blue-600 text-xs">*</span>
               </label>
               <input
                 type="text"
@@ -82,21 +95,21 @@ const DiagnosisForm = () => {
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="山田 太郎"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 placeholder-slate-400 transition-all duration-300"
                 required
               />
             </div>
 
             {/* 都道府県 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                都道府県 <span className="text-red-500 text-xs">*</span>
+            <div className="group">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                都道府県 <span className="text-blue-600 text-xs">*</span>
               </label>
               <select
                 name="prefecture"
                 value={formData.prefecture}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 transition-all duration-300 hover:border-amber-500/50 shadow-sm"
                 required
               >
                 <option value="">選択してください</option>
@@ -151,15 +164,15 @@ const DiagnosisForm = () => {
             </div>
 
             {/* 延床面積 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                延床面積 <span className="text-red-500 text-xs">*</span>
+            <div className="group">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                延床面積 <span className="text-blue-600 text-xs">*</span>
               </label>
               <select
                 name="floorArea"
                 value={formData.floorArea}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 transition-all duration-300 hover:border-amber-500/50 shadow-sm"
                 required
               >
                 <option value="">選択してください</option>
@@ -176,15 +189,15 @@ const DiagnosisForm = () => {
             </div>
 
             {/* 現在の状況 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                現在の状況 <span className="text-red-500 text-xs">*</span>
+            <div className="group">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                現在の状況 <span className="text-blue-600 text-xs">*</span>
               </label>
               <select
                 name="currentSituation"
                 value={formData.currentSituation}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 transition-all duration-300 hover:border-amber-500/50 shadow-sm"
                 required
               >
                 <option value="">選択してください</option>
@@ -196,15 +209,15 @@ const DiagnosisForm = () => {
             </div>
 
             {/* 工事種別 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                工事種別 <span className="text-red-500 text-xs">*</span>
+            <div className="group">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                工事種別 <span className="text-blue-600 text-xs">*</span>
               </label>
               <select
                 name="constructionType"
                 value={formData.constructionType}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 transition-all duration-300 hover:border-amber-500/50 shadow-sm"
                 required
               >
                 <option value="">選択してください</option>
@@ -219,9 +232,9 @@ const DiagnosisForm = () => {
             </div>
 
             {/* 電話番号 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                電話番号 <span className="text-red-500 text-xs">*</span>
+            <div className="group">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                電話番号 <span className="text-blue-600 text-xs">*</span>
               </label>
               <input
                 type="tel"
@@ -229,15 +242,15 @@ const DiagnosisForm = () => {
                 value={formData.phone}
                 onChange={handleInputChange}
                 placeholder="090-1234-5678"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 placeholder-gray-400 transition-all duration-300 hover:border-amber-500/50 shadow-sm"
                 required
               />
             </div>
 
             {/* メールアドレス */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                メールアドレス <span className="text-red-500 text-xs">*</span>
+            <div className="group">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                メールアドレス <span className="text-blue-600 text-xs">*</span>
               </label>
               <input
                 type="email"
@@ -245,22 +258,24 @@ const DiagnosisForm = () => {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="example@email.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 placeholder-gray-400 transition-all duration-300 hover:border-amber-500/50 shadow-sm"
                 required
               />
             </div>
           </div>
 
           {/* 送信ボタン */}
-          <div className="text-center pt-6">
+          <div className="text-center pt-4 md:pt-6">
             <button
               type="submit"
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-12 rounded-full text-lg transition-colors"
+              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 md:py-4 px-8 md:px-12 rounded-full text-sm md:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
               無料診断を開始する
             </button>
           </div>
-        </form>
+          </form>
+          </div>
+        </div>
       </div>
     </section>
   );

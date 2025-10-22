@@ -2,25 +2,12 @@ import Link from 'next/link'
 
 export default function NotFound() {
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '2rem'
-    }}>
-      <h2 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1rem' }}>404</h2>
-      <p style={{ fontSize: '1.25rem', marginBottom: '2rem' }}>ページが見つかりませんでした</p>
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-50">
+      <h2 className="text-5xl font-bold mb-4 text-gray-900">404</h2>
+      <p className="text-xl mb-8 text-gray-700">ページが見つかりませんでした</p>
       <Link
         href="/"
-        style={{
-          padding: '0.75rem 1.5rem',
-          backgroundColor: '#3b82f6',
-          color: 'white',
-          borderRadius: '0.5rem',
-          textDecoration: 'none'
-        }}
+        className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
       >
         ホームに戻る
       </Link>

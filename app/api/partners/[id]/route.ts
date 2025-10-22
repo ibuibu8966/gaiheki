@@ -26,23 +26,6 @@ export async function GET(
           select: {
             supported_prefecture: true
           }
-        },
-        customers: {
-          where: {
-            customer_rating: { not: null }
-          },
-          select: {
-            customer_name: true,
-            customer_rating: true,
-            customer_review_title: true,
-            customer_review: true,
-            customer_review_date: true,
-            customer_construction_type: true,
-            construction_amount: true
-          },
-          orderBy: {
-            customer_review_date: 'desc'
-          }
         }
       }
     });
@@ -54,9 +37,65 @@ export async function GET(
       );
     }
 
+    // レビューがある完了案件を取得（partner/reviewsと同じロジック）
+    const orders = await prisma.orders.findMany({
+      where: {
+        order_status: 'COMPLETED',
+        quotations: {
+          partner_id: partnerId,
+          is_selected: true,
+          diagnosis_requests: {
+            customers: {
+              customer_rating: {
+                not: null
+              }
+            }
+          }
+        }
+      },
+      include: {
+        quotations: {
+          include: {
+            diagnosis_requests: {
+              include: {
+                customers: {
+                  select: {
+                    id: true,
+                    customer_name: true,
+                    customer_construction_type: true,
+                    customer_rating: true,
+                    customer_review_title: true,
+                    customer_review: true,
+                    customer_review_date: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        completion_date: 'desc'
+      }
+    });
+
+    // レビューをフォーマット
+    const reviews = orders.map(order => {
+      const customer = order.quotations.diagnosis_requests.customers;
+      return {
+        customerName: customer.customer_name,
+        rating: customer.customer_rating,
+        reviewTitle: customer.customer_review_title,
+        review: customer.customer_review,
+        reviewDate: customer.customer_review_date?.toISOString().split('T')[0],
+        constructionType: customer.customer_construction_type,
+        constructionAmount: order.construction_amount || order.quotations.quotation_amount
+      };
+    });
+
     // 評価を集計
-    const ratings = partner.customers
-      .map(c => c.customer_rating)
+    const ratings = reviews
+      .map(r => r.rating)
       .filter((r): r is number => r !== null);
 
     const averageRating = ratings.length > 0
@@ -64,17 +103,6 @@ export async function GET(
       : 0;
 
     const reviewCount = ratings.length;
-
-    // レビューをフォーマット
-    const reviews = partner.customers.map(customer => ({
-      customerName: customer.customer_name,
-      rating: customer.customer_rating,
-      reviewTitle: customer.customer_review_title,
-      review: customer.customer_review,
-      reviewDate: customer.customer_review_date?.toISOString().split('T')[0],
-      constructionType: customer.customer_construction_type,
-      constructionAmount: customer.construction_amount
-    }));
 
     // 対応エリアを取得
     const supportedPrefectures = partner.partner_prefectures.map(

@@ -9,102 +9,166 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="bg-orange-500 text-white py-16 px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* メインコンテンツ */}
-        <div className="text-center mb-12">
-          {/* メインタイトル */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8">
-            <span className="block">外壁のお悩み、</span>
-            <span className="block text-yellow-300">すべて解決します。</span>
-          </h1>
-          
-          {/* サービス名とバッジ */}
-          <div className="bg-orange-600 inline-block px-8 py-4 rounded-lg mb-8">
-            <h2 className="text-2xl font-bold mb-4">プロタッチ外壁塗装</h2>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
-              <div className="flex items-center">
-                <svg className="w-4 h-4 mr-2 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-                利用者満足度97%
+    <section className="relative py-20 px-4 overflow-hidden">
+      {/* 背景画像 */}
+      <div className="absolute inset-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{backgroundImage: 'url(/hero-bg.jpg)'}}
+        />
+        {/* 黒いオーバーレイでぼかし効果 */}
+        <div className="absolute inset-0 bg-black/40"></div>
+        {/* グラデーションオーバーレイ */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* メインビジュアル - 重なり合うレイアウト */}
+        <div className="relative mb-16 md:mb-32 min-h-[500px] md:min-h-[700px] flex flex-col md:flex-row items-center justify-between gap-8 md:gap-16">
+          {/* 左側: サブキャッチコピーと統計情報 */}
+          <div className="flex-1 w-full animate-fadeIn" style={{animationDelay: '0.2s'}}>
+            {/* サブキャッチコピー */}
+            <div className="mb-8 md:mb-16">
+              <p className="text-lg md:text-xl lg:text-2xl text-white leading-relaxed font-light drop-shadow-lg">
+                日本全国<span className="inline-block mx-1 md:mx-2 px-3 py-1 md:px-4 md:py-2 bg-white text-slate-900 font-bold text-xl md:text-2xl lg:text-3xl rounded-lg md:rounded-xl shadow-xl">3,500社</span>の厳選された職人が<br className="hidden md:block"/>
+                あなたの大切な住まいを最高の品質で守ります
+              </p>
+            </div>
+
+            {/* 統計情報 */}
+            <div className="bg-white/90 backdrop-blur-sm border border-white/60 rounded-2xl md:rounded-3xl p-6 md:p-8 modern-shadow-lg w-full md:inline-block">
+              <div className="flex items-center justify-around gap-6 md:gap-12">
+                <div className="text-center">
+                  <p className="text-xs text-slate-600 tracking-wider mb-2 md:mb-3 font-semibold uppercase">利用者満足度</p>
+                  <p className="font-sans text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent" style={{WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                    97<span className="text-2xl md:text-3xl lg:text-4xl">%</span>
+                  </p>
+                </div>
+
+                <div className="w-px h-16 md:h-20 bg-gradient-to-b from-transparent via-slate-300 to-transparent"></div>
+
+                <div className="text-center">
+                  <p className="text-xs text-slate-600 tracking-wider mb-2 md:mb-3 font-semibold uppercase">提携業者数</p>
+                  <p className="font-sans text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent" style={{WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                    3,500<span className="text-xl md:text-2xl lg:text-3xl">社</span>
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center">
-                <svg className="w-4 h-4 mr-2 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+            </div>
+          </div>
+
+          {/* 中央寄り: 縦書きタイトル */}
+          <div className="animate-fadeInUp mr-0 md:mr-16 lg:mr-32">
+            <div className="flex items-start gap-4 md:gap-6 lg:gap-8">
+              {/* 縦書きタイトル - すべて解決します */}
+              <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white drop-shadow-2xl" style={{writingMode: 'vertical-rl', textOrientation: 'upright', letterSpacing: '0.2em', textShadow: '0 4px 20px rgba(0,0,0,0.5)'}}>
+                すべて解決します
+              </h1>
+
+              {/* 縦書きタイトル - 外壁のお悩み */}
+              <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white drop-shadow-2xl" style={{writingMode: 'vertical-rl', textOrientation: 'upright', letterSpacing: '0.2em', textShadow: '0 4px 20px rgba(0,0,0,0.5)'}}>
+                外壁のお悩み
+              </h1>
+            </div>
+          </div>
+
+        </div>
+
+
+        {/* 3つの特徴 - シンプルでヒューマンなデザイン */}
+        <div className="grid md:grid-cols-3 gap-6 mb-16 md:mb-32">
+          {/* カード1 */}
+          <div className="group text-center relative animate-fadeIn" style={{animationDelay: '0.8s'}}>
+            <div className="relative bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl p-10 transition-all duration-300 shadow-md hover:shadow-lg hover:bg-white/60">
+              {/* アイコン */}
+              <div className="w-14 h-14 mx-auto mb-6 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clipRule="evenodd" />
                 </svg>
-                提携業者数3,500社超
               </div>
+
+              {/* タイトル */}
+              <h3 className="text-xl font-bold text-slate-900 mb-3">
+                完全透明な
+                <br/>
+                料金システム
+              </h3>
+
+              {/* 説明文 */}
+              <p className="text-sm text-slate-800 leading-relaxed">
+                追加費用は一切なし。
+                <br/>
+                明瞭会計で安心の品質をお約束
+              </p>
             </div>
-            <p className="text-sm mt-2 opacity-90">信頼と実績の外壁塗装マッチングサービス</p>
+          </div>
+
+          {/* カード2 */}
+          <div className="group text-center relative animate-fadeIn" style={{animationDelay: '0.9s'}}>
+            <div className="relative bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl p-10 transition-all duration-300 shadow-md hover:shadow-lg hover:bg-white/60">
+              {/* アイコン */}
+              <div className="w-14 h-14 mx-auto mb-6 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                </svg>
+              </div>
+
+              {/* タイトル */}
+              <h3 className="text-xl font-bold text-slate-900 mb-3">
+                厳選された
+                <br/>
+                プロフェッショナル
+              </h3>
+
+              {/* 説明文 */}
+              <p className="text-sm text-slate-800 leading-relaxed">
+                豊富な実績と確かな技術を持つ
+                <br/>
+                一流職人のみをご紹介
+              </p>
+            </div>
+          </div>
+
+          {/* カード3 */}
+          <div className="group text-center relative animate-fadeIn" style={{animationDelay: '1s'}}>
+            <div className="relative bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl p-10 transition-all duration-300 shadow-md hover:shadow-lg hover:bg-white/60">
+              {/* アイコン */}
+              <div className="w-14 h-14 mx-auto mb-6 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5z" />
+                </svg>
+              </div>
+
+              {/* タイトル */}
+              <h3 className="text-xl font-bold text-slate-900 mb-3">
+                万全の
+                <br/>
+                アフターケア体制
+              </h3>
+
+              {/* 説明文 */}
+              <p className="text-sm text-slate-800 leading-relaxed">
+                施工後も末永く。
+                <br/>
+                充実の保証とサポートで安心
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* 3つの特徴 */}
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-orange-400 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <p className="flex items-center justify-center">
-              <svg className="w-4 h-4 mr-2 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-              透明な料金体系で安心
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="w-16 h-16 bg-orange-400 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <p className="flex items-center justify-center">
-              <svg className="w-4 h-4 mr-2 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-              技術力の高い職人をご紹介
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="w-16 h-16 bg-orange-400 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5z" />
-              </svg>
-            </div>
-            <p className="flex items-center justify-center">
-              <svg className="w-4 h-4 mr-2 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-              アフターフォローまで完全サポート
-            </p>
-          </div>
-        </div>
+        {/* 診断フォームボックス - シンプルなデザイン */}
+        <div className="max-w-3xl mx-auto animate-fadeIn" style={{animationDelay: '1.2s'}}>
+          <div className="relative bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl p-6 md:p-8 lg:p-10 shadow-lg hover:shadow-xl transition-all duration-300 text-center">
+            <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-5">
+              今すぐ外壁の状態を<span className="text-blue-600">チェック</span>
+            </h3>
 
-        {/* 注記 */}
-        <div className="text-center mb-8">
-          <p className="text-sm opacity-80">※2024年度お客様満足度調査結果より</p>
-        </div>
-
-        {/* 診断フォームボックス */}
-        <div className="max-w-md mx-auto">
-          <div className="bg-white rounded-2xl p-8 text-center shadow-lg">
-            <p className="text-orange-500 text-sm font-medium mb-2">無料診断はたった30秒！</p>
-            <h3 className="text-2xl font-bold text-gray-800 mb-6">今すぐ外壁の状態をチェック</h3>
             <button
               onClick={scrollToDiagnosisForm}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-full text-lg w-full mb-4 transition-colors"
+              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 md:py-3.5 px-8 md:px-12 rounded-full text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
               無料診断を始める
             </button>
-            <div className="flex items-center justify-center text-sm text-gray-600">
-              <svg className="w-4 h-4 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              初回診断完了でQUOカード2,000円分をプレゼント！
-            </div>
           </div>
         </div>
       </div>

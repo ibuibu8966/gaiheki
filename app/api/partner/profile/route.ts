@@ -33,23 +33,54 @@ export async function GET(request: NextRequest) {
       }, { status: 404 });
     }
 
-    // レビューの平均評価を計算（customersテーブルから）
-    const reviews = await prisma.customers.findMany({
+    // レビューがある完了案件を取得（reviews/route.tsと同じロジック）
+    const completedOrdersWithReviews = await prisma.orders.findMany({
       where: {
-        partner_id: partner.id,
-        customer_rating: { not: null }
+        order_status: 'COMPLETED',
+        quotations: {
+          partner_id: partner.id,
+          is_selected: true,
+          diagnosis_requests: {
+            customers: {
+              customer_rating: {
+                not: null
+              }
+            }
+          }
+        }
+      },
+      include: {
+        quotations: {
+          include: {
+            diagnosis_requests: {
+              include: {
+                customers: {
+                  select: {
+                    customer_rating: true
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     });
 
-    const averageRating = reviews.length > 0
-      ? reviews.reduce((sum, customer) => sum + (customer.customer_rating || 0), 0) / reviews.length
+    // レビューの平均評価を計算
+    const ratings = completedOrdersWithReviews
+      .map(order => order.quotations.diagnosis_requests.customers.customer_rating)
+      .filter((rating): rating is number => rating !== null);
+
+    const averageRating = ratings.length > 0
+      ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
       : 0;
 
-    // 施工完了件数を計算
+    // 施工完了件数を計算（レビューの有無に関わらず）
     const completedCount = await prisma.orders.count({
       where: {
         quotations: {
-          partner_id: partner.id
+          partner_id: partner.id,
+          is_selected: true
         },
         order_status: 'COMPLETED'
       }
@@ -69,7 +100,7 @@ export async function GET(request: NextRequest) {
       appeal: partner.partner_details?.appeal_text || '',
       loginEmail: partner.login_email,
       rating: parseFloat(averageRating.toFixed(1)),
-      reviewCount: reviews.length,
+      reviewCount: ratings.length,
       workCount: completedCount,
       serviceAreas: partner.partner_prefectures.map(pp => pp.supported_prefecture)
     };
