@@ -1,199 +1,188 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import Link from 'next/link';
 
-interface Invoice {
+interface CustomerInvoice {
   id: number;
   invoice_number: string;
-  customer_name: string;
-  project_name: string;
-  grand_total: number;
+  order_id: number;
   issue_date: string;
   due_date: string;
+  total_amount: number;
+  tax_amount: number;
+  grand_total: number;
   status: string;
+  payment_date: string | null;
+  order: {
+    quotation: {
+      diagnosis_request: {
+        customer: {
+          customer_name: string;
+        };
+      };
+    };
+  };
 }
 
-export default function InvoiceListPage() {
-  const router = useRouter();
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
+export default function PartnerInvoicesPage() {
+  const [invoices, setInvoices] = useState<CustomerInvoice[]>([]);
   const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState('all');
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const limit = 10;
 
   useEffect(() => {
     fetchInvoices();
-  }, [status, search, page]);
+  }, []);
 
   const fetchInvoices = async () => {
     try {
-      setLoading(true);
-      const params = new URLSearchParams();
-      if (status !== 'all') params.append('status', status);
-      if (search) params.append('search', search);
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
-
-      const res = await fetch(`/api/partner/invoices?${params}`);
-      const data = await res.json();
-
-      if (data.success) {
-        setInvoices(data.data.invoices);
-        setTotal(data.data.total);
+      const response = await fetch('/api/partner/invoices');
+      if (response.ok) {
+        const data = await response.json();
+        setInvoices(data);
       }
     } catch (error) {
-      console.error('請求書一覧の取得に失敗しました:', error);
+      console.error('Error fetching invoices:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const variants: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
-      DRAFT: 'secondary',
-      UNPAID: 'outline',
-      PAID: 'default',
-      OVERDUE: 'destructive',
-      CANCELLED: 'outline',
-    };
-
-    const labels: { [key: string]: string } = {
-      DRAFT: '下書き',
-      UNPAID: '未払い',
-      PAID: '支払い済み',
-      OVERDUE: '遅延',
-      CANCELLED: 'キャンセル',
-    };
-
-    return <Badge variant={variants[status] || 'default'}>{labels[status] || status}</Badge>;
+  const handleDownloadPDF = async (invoiceId: number) => {
+    try {
+      const response = await fetch(`/api/partner/invoices/${invoiceId}/pdf`);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `invoice_${invoiceId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        alert('PDFのダウンロードに失敗しました');
+      }
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      alert('PDFのダウンロードに失敗しました');
+    }
   };
 
-  const totalPages = Math.ceil(total / limit);
+  const getStatusLabel = (status: string) => {
+    const statusMap: { [key: string]: string } = {
+      UNPAID: '未払い',
+      PAID: '支払済',
+      OVERDUE: '期限切れ',
+      CANCELLED: 'キャンセル',
+    };
+    return statusMap[status] || status;
+  };
+
+  const getStatusColor = (status: string) => {
+    const colorMap: { [key: string]: string } = {
+      UNPAID: 'bg-yellow-100 text-yellow-800',
+      PAID: 'bg-green-100 text-green-800',
+      OVERDUE: 'bg-red-100 text-red-800',
+      CANCELLED: 'bg-gray-100 text-gray-800',
+    };
+    return colorMap[status] || 'bg-gray-100 text-gray-800';
+  };
+
+  if (loading) {
+    return (
+      <div className="p-8">
+        <div className="text-center">読み込み中...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">請求管理</h1>
-        <Button onClick={() => router.push('/partner-dashboard/invoices/new')}>
-          新規作成
-        </Button>
+    <div className="p-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">顧客請求書管理</h1>
       </div>
 
-      {/* フィルター */}
-      <div className="flex gap-4">
-        <Input
-          placeholder="顧客名、案件名で検索"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-          className="max-w-sm"
-        />
-        <Select value={status} onValueChange={(value) => {
-          setStatus(value);
-          setPage(1);
-        }}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="ステータス" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">すべて</SelectItem>
-            <SelectItem value="DRAFT">下書き</SelectItem>
-            <SelectItem value="UNPAID">未払い</SelectItem>
-            <SelectItem value="PAID">支払い済み</SelectItem>
-            <SelectItem value="OVERDUE">遅延</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* テーブル */}
-      {loading ? (
-        <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          <p className="mt-2 text-gray-600">読み込み中...</p>
-        </div>
-      ) : invoices.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-600">請求書がありません</p>
+      {invoices.length === 0 ? (
+        <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+          請求書がありません
         </div>
       ) : (
-        <>
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>請求書番号</TableHead>
-                  <TableHead>顧客名</TableHead>
-                  <TableHead>案件名</TableHead>
-                  <TableHead className="text-right">請求額</TableHead>
-                  <TableHead>発行日</TableHead>
-                  <TableHead>支払期日</TableHead>
-                  <TableHead>ステータス</TableHead>
-                  <TableHead>操作</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {invoices.map((invoice) => (
-                  <TableRow key={invoice.id}>
-                    <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
-                    <TableCell>{invoice.customer_name}</TableCell>
-                    <TableCell>{invoice.project_name}</TableCell>
-                    <TableCell className="text-right">
-                      ¥{invoice.grand_total.toLocaleString()}
-                    </TableCell>
-                    <TableCell>{invoice.issue_date}</TableCell>
-                    <TableCell>{invoice.due_date}</TableCell>
-                    <TableCell>{getStatusBadge(invoice.status)}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => router.push(`/partner-dashboard/invoices/${invoice.id}`)}
-                      >
-                        詳細
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          {/* ページネーション */}
-          {totalPages > 1 && (
-            <div className="flex justify-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage(page - 1)}
-                disabled={page === 1}
-              >
-                前へ
-              </Button>
-              <span className="px-4 py-2 text-sm">
-                {page} / {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage(page + 1)}
-                disabled={page === totalPages}
-              >
-                次へ
-              </Button>
-            </div>
-          )}
-        </>
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  請求書番号
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  顧客名
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  発行日
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  支払期限
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  合計金額
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ステータス
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  操作
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {invoices.map((invoice) => (
+                <tr key={invoice.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {invoice.invoice_number}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {invoice.order.quotation.diagnosis_request.customer.customer_name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {new Date(invoice.issue_date).toLocaleDateString('ja-JP')}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {new Date(invoice.due_date).toLocaleDateString('ja-JP')}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                    ¥{invoice.grand_total.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                        invoice.status
+                      )}`}
+                    >
+                      {getStatusLabel(invoice.status)}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button
+                      onClick={() => handleDownloadPDF(invoice.id)}
+                      className="text-blue-600 hover:text-blue-900 mr-4"
+                    >
+                      PDF
+                    </button>
+                    <Link
+                      href={`/partner-dashboard/invoices/${invoice.id}`}
+                      className="text-indigo-600 hover:text-indigo-900"
+                    >
+                      詳細
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
 }
+

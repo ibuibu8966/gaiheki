@@ -103,7 +103,7 @@ export function generateInvoicePDF(invoice: InvoiceData): Buffer {
       fontSize: 10,
     },
     columnStyles: {
-      0: { cellWidth: 130 },
+      0: { cellWidth: 'auto' },
       1: { cellWidth: 50, halign: 'right' },
     },
   });

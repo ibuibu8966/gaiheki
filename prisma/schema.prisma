@@ -197,10 +197,16 @@ model partner_details {
   business_hours          String?        @db.VarChar(200)
   closed_days             String?        @db.VarChar(200)
   site_reprint_prefecture Prefecture?
-  partners_status         PartnersStatus @default(INACTIVE)
-  created_at              DateTime       @default(now())
-  updated_at              DateTime
-  partners                partners       @relation(fields: [partner_id], references: [id], onDelete: Cascade)
+  partners_status              PartnersStatus @default(INACTIVE)
+  invoice_registration_number  String?        @db.VarChar(50)
+  bank_name                    String?        @db.VarChar(255)
+  bank_branch_name             String?        @db.VarChar(255)
+  bank_account_type            String?        @db.VarChar(50)
+  bank_account_number          String?        @db.VarChar(50)
+  bank_account_holder          String?        @db.VarChar(255)
+  created_at                   DateTime       @default(now())
+  updated_at                   DateTime
+  partners                     partners       @relation(fields: [partner_id], references: [id], onDelete: Cascade)
 }
 
 model partner_prefectures {
@@ -501,21 +507,5 @@ model company_settings {
   bank_account_holder           String?  @db.VarChar(100)
   created_at                    DateTime @default(now())
   updated_at                    DateTime @updatedAt
-}
-model company_settings {
-  id                          Int       @id @default(autoincrement())
-  company_name                String    @db.VarChar(255)
-  postal_code                 String?   @db.VarChar(20)
-  address                     String?
-  phone                       String?   @db.VarChar(50)
-  email                       String?   @db.VarChar(255)
-  invoice_registration_number String?   @db.VarChar(50)
-  bank_name                   String?   @db.VarChar(255)
-  bank_branch_name            String?   @db.VarChar(255)
-  bank_account_type           String?   @db.VarChar(50)
-  bank_account_number         String?   @db.VarChar(50)
-  bank_account_holder         String?   @db.VarChar(255)
-  created_at                  DateTime  @default(now())
-  updated_at                  DateTime  @updatedAt
 }
 
