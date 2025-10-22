@@ -21,7 +21,19 @@
       "Bash(echo:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\nRedesign partner detail page with modern UI/UX\n\nパートナー詳細ページのデザインを全面改善:\n\n【ビジュアル改善】\n- グラデーション背景（オレンジ→白→グレー）で深みを追加\n- カード型デザインにrounded-2xlと細いborderを適用\n- hover時にshadowが強くなるインタラクション追加\n- アイコンを各セクションに追加して視認性向上\n\n【レイアウト改善】\n- 右カラムをsticky（top-6）で固定し、スクロール時も会社情報が見える\n- 電話番号にtel:リンクとアイコンアニメーション追加\n- CTAボタンにグラデーションと影、hoverアニメーション追加\n- レビューカードのレイアウトを改善（バッジ、評価、金額）\n\n【タイポグラフィ】\n- 見出しサイズの調整と一貫性向上\n- ラベルをuppercase + tracking-widerで統一\n- leading-relaxedで行間を適切に調整\n\n【インタラクション】\n- ボタンにtransform hover効果追加\n- パンくずナビに矢印アニメーション追加\n- ローディングにスピナーアニメーション追加\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git push:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(powershell:*)",
+      "Bash(node:*)",
+      "Bash(npx prisma db execute --file ./scripts/seed-historical-data.sql --schema ./prisma/schema.prisma)",
+      "Bash(timeout 10 bash -c \"while ! curl -s http://localhost:3000 > /dev/null; do sleep 1; done && echo ''Server is ready''\")",
+      "Bash(npm --version:*)",
+      "Bash(npx next dev)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npx prisma db execute:*)",
+      "Bash(timeout 10 powershell:*)"
     ],
     "deny": [],
     "ask": []
