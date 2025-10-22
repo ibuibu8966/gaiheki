@@ -26,6 +26,14 @@ export async function GET(
       },
     });
 
+    // 会社設定情報を取得（テーブルが存在しない場合はnull）
+    let companySettings = null;
+    try {
+      companySettings = await prisma.company_settings.findFirst();
+    } catch (error) {
+      console.warn('company_settingsテーブルが存在しません:', error);
+    }
+
     if (!invoice) {
       return NextResponse.json(
         { success: false, error: '請求書が見つかりません' },
@@ -52,10 +60,23 @@ export async function GET(
         partner: {
           id: invoice.partner.id,
           company_name: invoice.partner.partner_details?.company_name || '',
-          email: invoice.partner.email,
-          phone: invoice.partner.partner_details?.phone || '',
+          email: invoice.partner.login_email,
+          phone: invoice.partner.partner_details?.phone_number || '',
           address: invoice.partner.partner_details?.address || '',
         },
+        company_settings: companySettings ? {
+          company_name: companySettings.company_name,
+          postal_code: companySettings.postal_code,
+          address: companySettings.address,
+          phone: companySettings.phone,
+          email: companySettings.email,
+          invoice_registration_number: companySettings.invoice_registration_number,
+          bank_name: companySettings.bank_name,
+          bank_branch_name: companySettings.bank_branch_name,
+          bank_account_type: companySettings.bank_account_type,
+          bank_account_number: companySettings.bank_account_number,
+          bank_account_holder: companySettings.bank_account_holder,
+        } : null,
       },
     });
   } catch (error) {

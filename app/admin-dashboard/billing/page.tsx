@@ -32,13 +32,14 @@ import {
 import dynamic from 'next/dynamic';
 
 // PDFコンポーネントは動的にインポート（SSRを無効化）
-const PDFDownloadLink = dynamic(
-  () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
-  { ssr: false, loading: () => <Button variant="outline" disabled>PDF準備中...</Button> }
-);
-const CompanyInvoicePDF = dynamic(() => import('@/app/components/Admin/Invoice/CompanyInvoicePDFMinimal'), {
-  ssr: false,
-});
+// サーバーサイドPDF生成に変更したため、これらは不要
+// const PDFDownloadLink = dynamic(
+//   () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
+//   { ssr: false, loading: () => <Button variant="outline" disabled>PDF準備中...</Button> }
+// );
+// const CompanyInvoicePDF = dynamic(() => import('@/app/components/Admin/Invoice/CompanyInvoicePDFSimple'), {
+//   ssr: false,
+// });
 
 interface Invoice {
   id: number;
@@ -79,8 +80,7 @@ export default function BillingManagementPage() {
   } | null>(null);
   const [generating, setGenerating] = useState(false);
   const [selectedInvoiceIds, setSelectedInvoiceIds] = useState<number[]>([]);
-  const [selectedInvoiceForPDF, setSelectedInvoiceForPDF] = useState<any>(null);
-  const [loadingPDFData, setLoadingPDFData] = useState(false);
+  const [downloadingPDF, setDownloadingPDF] = useState(false);
 
   useEffect(() => {
     fetchInvoices();
@@ -212,55 +212,50 @@ export default function BillingManagementPage() {
 
   const handleDownloadPDF = async () => {
     if (selectedInvoiceIds.length === 0) {
-      alert('PDFをダウンロードする請求書を選択してください');
+      alert('請求書を選択してください');
       return;
     }
 
-    // 発行済みの請求書のみフィルタ
-    const issuedInvoices = invoices.filter(
-      (inv) => selectedInvoiceIds.includes(inv.id) && (inv.status === 'UNPAID' || inv.status === 'PAID')
-    );
-
-    if (issuedInvoices.length === 0) {
-      alert('発行済みの請求書を選択してください（下書きはPDF化できません）');
+    // 現在は1件のみ対応
+    if (selectedInvoiceIds.length > 1) {
+      alert('現在は1件ずつのダウンロードのみ対応しています');
       return;
     }
 
-    // 最初の請求書のみ処理
-    const invoiceId = issuedInvoices[0].id;
+    const invoiceId = selectedInvoiceIds[0];
 
     try {
-      setLoadingPDFData(true);
+      setDownloadingPDF(true);
 
-      // 請求書の詳細データを取得
-      const res = await fetch(`/api/admin/invoices/${invoiceId}`);
-      const data = await res.json();
-
-      if (data.success) {
-        console.log('===== 取得したデータ =====', data.data);
-        console.log('invoice_items:', data.data.invoice_items);
-
-        // PDFに渡すデータを整形（最小限のデータのみ）
-        const pdfData = {
-          invoice_number: data.data.invoice_number,
-          company_name: data.data.partner?.company_name || '会社名未設定',
-          issue_date: data.data.issue_date,
-          due_date: data.data.due_date,
-          total_amount: data.data.total_amount,
-          tax_amount: data.data.tax_amount,
-          grand_total: data.data.grand_total,
-        };
-
-        console.log('===== 整形後のPDFデータ =====', pdfData);
-        setSelectedInvoiceForPDF(pdfData);
-      } else {
-        alert('請求書データの取得に失敗しました');
+      // サーバーサイドでPDFを生成してダウンロード
+      const response = await fetch(`/api/admin/invoices/${invoiceId}/pdf`);
+      
+      if (!response.ok) {
+        throw new Error('PDF生成に失敗しました');
       }
+
+      // PDFをBlobとして取得
+      const blob = await response.blob();
+      
+      // ダウンロードリンクを作成
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `invoice_${invoiceId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      
+      // クリーンアップ
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      // 選択をクリア
+      setSelectedInvoiceIds([]);
     } catch (error) {
-      console.error('請求書データ取得エラー:', error);
-      alert('請求書データの取得に失敗しました');
+      console.error('PDFダウンロードエラー:', error);
+      alert('PDFのダウンロードに失敗しました');
     } finally {
-      setLoadingPDFData(false);
+      setDownloadingPDF(false);
     }
   };
 
@@ -436,37 +431,14 @@ export default function BillingManagementPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                {selectedInvoiceForPDF ? (
-                  <PDFDownloadLink
-                    document={<CompanyInvoicePDF invoice={selectedInvoiceForPDF} />}
-                    fileName={`${selectedInvoiceForPDF.invoice_number}.pdf`}
-                  >
-                    {({ loading, url }) => {
-                      // PDFが生成されたら、少し待ってからリセット
-                      if (url && !loading) {
-                        setTimeout(() => setSelectedInvoiceForPDF(null), 1000);
-                      }
-                      return (
-                        <Button
-                          variant="outline"
-                          disabled={loading}
-                          className="border-orange-600 text-orange-600 hover:bg-orange-50"
-                        >
-                          {loading ? 'PDF生成中...' : 'PDFダウンロード'}
-                        </Button>
-                      );
-                    }}
-                  </PDFDownloadLink>
-                ) : (
-                  <Button
-                    onClick={handleDownloadPDF}
-                    disabled={selectedInvoiceIds.length === 0 || loadingPDFData}
-                    variant="outline"
-                    className="border-orange-600 text-orange-600 hover:bg-orange-50"
-                  >
-                    {loadingPDFData ? 'データ取得中...' : '選択した請求書をPDFダウンロード'}
-                  </Button>
-                )}
+                <Button
+                  onClick={handleDownloadPDF}
+                  disabled={selectedInvoiceIds.length === 0 || downloadingPDF}
+                  variant="outline"
+                  className="border-orange-600 text-orange-600 hover:bg-orange-50"
+                >
+                  {downloadingPDF ? 'PDF生成中...' : '選択した請求書をPDFダウンロード'}
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -597,3 +569,4 @@ export default function BillingManagementPage() {
     </div>
   );
 }
+
