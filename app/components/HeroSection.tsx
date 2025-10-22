@@ -81,10 +81,8 @@ const HeroSection = () => {
           <div className="group text-center relative animate-fadeIn" style={{animationDelay: '0.8s'}}>
             <div className="relative bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl p-10 transition-all duration-300 shadow-md hover:shadow-lg hover:bg-white/60">
               {/* アイコン */}
-              <div className="w-14 h-14 mx-auto mb-6 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
-                <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clipRule="evenodd" />
-                </svg>
+              <div className="w-14 h-14 mx-auto mb-6 flex items-center justify-center">
+                <img src="/icons/home.jpg" alt="料金システム" className="w-14 h-14 object-cover rounded-lg" />
               </div>
 
               {/* タイトル */}
@@ -107,10 +105,8 @@ const HeroSection = () => {
           <div className="group text-center relative animate-fadeIn" style={{animationDelay: '0.9s'}}>
             <div className="relative bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl p-10 transition-all duration-300 shadow-md hover:shadow-lg hover:bg-white/60">
               {/* アイコン */}
-              <div className="w-14 h-14 mx-auto mb-6 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
-                <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                </svg>
+              <div className="w-14 h-14 mx-auto mb-6 flex items-center justify-center">
+                <img src="/icons/prof.jpg" alt="プロフェッショナル" className="w-14 h-14 object-cover rounded-lg" />
               </div>
 
               {/* タイトル */}
@@ -133,10 +129,8 @@ const HeroSection = () => {
           <div className="group text-center relative animate-fadeIn" style={{animationDelay: '1s'}}>
             <div className="relative bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl p-10 transition-all duration-300 shadow-md hover:shadow-lg hover:bg-white/60">
               {/* アイコン */}
-              <div className="w-14 h-14 mx-auto mb-6 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
-                <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5z" />
-                </svg>
+              <div className="w-14 h-14 mx-auto mb-6 flex items-center justify-center">
+                <img src="/icons/bookmark.jpg" alt="アフターケア" className="w-14 h-14 object-cover rounded-lg" />
               </div>
 
               {/* タイトル */}
