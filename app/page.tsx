@@ -1,6 +1,7 @@
 import HeroSection from "./components/HeroSection";
 import AboutServiceSection from "./components/AboutServiceSection";
 import FeaturesSection from "./components/FeaturesSection";
+import BeforeAfterSection from "./components/BeforeAfterSection";
 import DiagnosisForm from "./components/DiagnosisForm";
 import ServiceAreasSection from "./components/ServiceAreasSection";
 import HowToUseSection from "./components/HowToUseSection";
@@ -15,6 +16,7 @@ export default function Home() {
       <HeroSection />
       <AboutServiceSection />
       <FeaturesSection />
+      <BeforeAfterSection />
       <DiagnosisForm />
       <ServiceAreasSection />
       <HowToUseSection />
