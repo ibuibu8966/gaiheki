@@ -35,7 +35,17 @@
       "Bash(npx prisma db execute:*)",
       "Bash(timeout 10 powershell:*)",
       "Bash(python crop_icons_centered.py:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(npx prisma migrate reset:*)",
+      "Bash(npx prisma migrate deploy:*)",
+      "Bash(npx prisma db seed:*)",
+      "Bash(npx prisma studio)",
+      "Bash(timeout 2 powershell:*)",
+      "Bash(npm run prisma:seed:*)",
+      "Bash(curl:*)",
+      "Bash(python -m json.tool:*)",
+      "Bash(timeout:*)",
+      "Bash(git config:*)"
     ],
     "deny": [],
     "ask": []

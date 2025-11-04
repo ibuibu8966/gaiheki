@@ -97,10 +97,11 @@ export default function AdminDashboardPage() {
   // KPI・グラフ用の期間選択
   const [kpiPeriod, setKpiPeriod] = useState<'6_months' | '12_months' | 'all'>('12_months');
 
-  // 加盟店別サマリー用の日付範囲
+  // 加盟店別サマリー用の日付範囲（デフォルト：過去3ヶ月）
   const now = new Date();
-  const [partnerStartYear, setPartnerStartYear] = useState(now.getFullYear());
-  const [partnerStartMonth, setPartnerStartMonth] = useState(now.getMonth() + 1);
+  const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1); // 3ヶ月前の1日
+  const [partnerStartYear, setPartnerStartYear] = useState(threeMonthsAgo.getFullYear());
+  const [partnerStartMonth, setPartnerStartMonth] = useState(threeMonthsAgo.getMonth() + 1);
   const [partnerStartDay, setPartnerStartDay] = useState(1);
   const [partnerEndYear, setPartnerEndYear] = useState(now.getFullYear());
   const [partnerEndMonth, setPartnerEndMonth] = useState(now.getMonth() + 1);

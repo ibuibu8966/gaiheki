@@ -106,29 +106,37 @@ export async function GET(request: NextRequest) {
       partnerOrdersMap[partnerId].push(o);
     });
 
-    // 加盟店別サマリー用: 期間内に完了した案件
+    // 加盟店別サマリー用: 期間内に請求書が発行された案件
     const partnerCompletedMap: Record<number, any[]> = {};
-    const allCompletedOrders = await prisma.orders.findMany({
+    const allInvoicedOrders = await prisma.customer_invoices.findMany({
       where: {
-        completion_date: {
+        issue_date: {
           gte: partnerStartDate,
           lte: partnerEndDate,
         },
-        order_status: {
-          in: ['COMPLETED', 'REVIEW_COMPLETED'],
-        },
       },
       include: {
-        quotations: true,
-        customer_invoices: true,
+        order: {
+          include: {
+            quotations: true,
+          },
+        },
       },
     });
-    allCompletedOrders.forEach((o) => {
-      const partnerId = o.quotations.partner_id;
+    allInvoicedOrders.forEach((invoice) => {
+      const order = invoice.order;
+      const partnerId = order.quotations.partner_id;
       if (!partnerCompletedMap[partnerId]) {
         partnerCompletedMap[partnerId] = [];
       }
-      partnerCompletedMap[partnerId].push(o);
+      // 請求書の金額を使用するため、orderに請求書情報を追加
+      const orderWithInvoice = {
+        ...order,
+        customer_invoices: invoice,
+        // 売上は請求書の総額を使用
+        construction_amount: invoice.grand_total,
+      };
+      partnerCompletedMap[partnerId].push(orderWithInvoice);
     });
 
     // KPI用の変数（chart_periodに基づく）
@@ -204,28 +212,28 @@ export async function GET(request: NextRequest) {
         },
       });
 
-      // その月に完了した案件を取得
-      const monthCompletedOrders = await prisma.orders.findMany({
+      // その月に請求書が発行された案件を取得
+      const monthInvoicedOrders = await prisma.customer_invoices.findMany({
         where: {
-          completion_date: {
+          issue_date: {
             gte: monthStart,
             lte: monthEnd,
           },
-          order_status: {
-            in: ['COMPLETED', 'REVIEW_COMPLETED'],
-          },
         },
         include: {
-          quotations: {
+          order: {
             include: {
-              partners: {
+              quotations: {
                 include: {
-                  fee_plans: true,
+                  partners: {
+                    include: {
+                      fee_plans: true,
+                    },
+                  },
                 },
               },
             },
           },
-          customer_invoices: true,
         },
       });
 
@@ -242,30 +250,30 @@ export async function GET(request: NextRequest) {
       // 月次集計
       const quotationCount = monthQuotations.length;
       const orderCount = monthOrders.length;
-      const completedCount = monthCompletedOrders.length;
+      const completedCount = monthInvoicedOrders.length;
 
-      const monthRevenue = monthCompletedOrders.reduce(
-        (sum, order) => sum + (order.construction_amount || 0),
+      const monthRevenue = monthInvoicedOrders.reduce(
+        (sum, invoice) => sum + invoice.grand_total,
         0
       );
 
-      // 手数料計算（完了案件ベース）
+      // 手数料計算（請求書発行ベース）
       let monthPlatformRevenue = 0;
       const partnerCompletedData: Record<number, { count: number; revenue: number }> = {};
 
-      monthCompletedOrders.forEach((order) => {
-        const partnerId = order.quotations.partners.id;
+      monthInvoicedOrders.forEach((invoice) => {
+        const partnerId = invoice.order.quotations.partners.id;
         if (!partnerCompletedData[partnerId]) {
           partnerCompletedData[partnerId] = { count: 0, revenue: 0 };
         }
         partnerCompletedData[partnerId].count++;
-        partnerCompletedData[partnerId].revenue += order.construction_amount || 0;
+        partnerCompletedData[partnerId].revenue += invoice.grand_total;
       });
 
       Object.entries(partnerCompletedData).forEach(([partnerIdStr, data]) => {
-        const partner = monthCompletedOrders.find(
-          (o) => o.quotations.partners.id === parseInt(partnerIdStr)
-        )?.quotations.partners;
+        const partner = monthInvoicedOrders.find(
+          (invoice) => invoice.order.quotations.partners.id === parseInt(partnerIdStr)
+        )?.order.quotations.partners;
 
         if (partner?.fee_plans) {
           const feeData = calculateFees(partner.fee_plans, {
@@ -353,28 +361,28 @@ export async function GET(request: NextRequest) {
         },
       });
 
-      // その月に完了した案件を取得
-      const monthCompletedOrders = await prisma.orders.findMany({
+      // その月に請求書が発行された案件を取得
+      const monthInvoiced = await prisma.customer_invoices.findMany({
         where: {
-          completion_date: {
+          issue_date: {
             gte: monthStart,
             lte: monthEnd,
           },
-          order_status: {
-            in: ['COMPLETED', 'REVIEW_COMPLETED'],
-          },
         },
         include: {
-          quotations: {
+          order: {
             include: {
-              partners: {
+              quotations: {
                 include: {
-                  fee_plans: true,
+                  partners: {
+                    include: {
+                      fee_plans: true,
+                    },
+                  },
                 },
               },
             },
           },
-          customer_invoices: true,
         },
       });
 
@@ -382,24 +390,24 @@ export async function GET(request: NextRequest) {
       const allPartnerIds = new Set([
         ...monthQuotations.map((q) => q.partners.id),
         ...monthOrders.map((o) => o.quotations.partners.id),
-        ...monthCompletedOrders.map((o) => o.quotations.partners.id),
+        ...monthInvoiced.map((invoice) => invoice.order.quotations.partners.id),
       ]);
 
       allPartnerIds.forEach((partnerId) => {
         const partnerQuotations = monthQuotations.filter((q) => q.partners.id === partnerId);
         const partnerOrders = monthOrders.filter((o) => o.quotations.partners.id === partnerId);
-        const partnerCompleted = monthCompletedOrders.filter((o) => o.quotations.partners.id === partnerId);
+        const partnerInvoiced = monthInvoiced.filter((invoice) => invoice.order.quotations.partners.id === partnerId);
 
-        const revenue = partnerCompleted.reduce(
-          (sum, order) => sum + (order.construction_amount || 0),
+        const revenue = partnerInvoiced.reduce(
+          (sum, invoice) => sum + invoice.grand_total,
           0
         );
 
         let fees = 0;
-        if (partnerCompleted.length > 0 && partnerCompleted[0].quotations.partners.fee_plans) {
-          const feeData = calculateFees(partnerCompleted[0].quotations.partners.fee_plans, {
+        if (partnerInvoiced.length > 0 && partnerInvoiced[0].order.quotations.partners.fee_plans) {
+          const feeData = calculateFees(partnerInvoiced[0].order.quotations.partners.fee_plans, {
             order_count: partnerOrders.length,  // 受注件数
-            project_count: partnerCompleted.length,  // 完了件数
+            project_count: partnerInvoiced.length,  // 請求書発行件数
             project_total_amount: revenue,
           });
           fees = feeData.total;
@@ -413,7 +421,7 @@ export async function GET(request: NextRequest) {
           month: `${monthStart.getFullYear()}/${String(monthStart.getMonth() + 1).padStart(2, '0')}`,
           quotations: partnerQuotations.length,
           orders: partnerOrders.length,
-          completed: partnerCompleted.length,
+          completed: partnerInvoiced.length,
           revenue,
           fees,
         });
@@ -427,18 +435,18 @@ export async function GET(request: NextRequest) {
       // 受注件数（期間内に受注された案件）
       const orderCount = partnerOrdersMap[partner.id]?.length || 0;
 
-      // 施工完了件数と金額（期間内に完了した案件）
-      const completedOrders = partnerCompletedMap[partner.id] || [];
-      const completedCount = completedOrders.length;
+      // 請求書発行件数と売上金額（期間内に請求書が発行された案件）
+      const invoicedOrders = partnerCompletedMap[partner.id] || [];
+      const completedCount = invoicedOrders.length;
 
-      const projectTotalAmount = completedOrders.reduce(
+      const projectTotalAmount = invoicedOrders.reduce(
         (sum, order) => sum + (order.construction_amount || 0),
         0
       );
 
       // 手数料計算
       let fees = 0;
-      if (partner.fee_plans && completedOrders.length > 0) {
+      if (partner.fee_plans && invoicedOrders.length > 0) {
         const feeData = calculateFees(partner.fee_plans, {
           order_count: orderCount,
           project_count: completedCount,
