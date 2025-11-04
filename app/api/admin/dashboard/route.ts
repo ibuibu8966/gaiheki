@@ -245,7 +245,7 @@ export async function GET(request: NextRequest) {
       const completedCount = monthCompletedOrders.length;
 
       const monthRevenue = monthCompletedOrders.reduce(
-        (sum, order) => sum + (order.customer_invoices?.grand_total || 0),
+        (sum, order) => sum + (order.construction_amount || 0),
         0
       );
 
@@ -259,7 +259,7 @@ export async function GET(request: NextRequest) {
           partnerCompletedData[partnerId] = { count: 0, revenue: 0 };
         }
         partnerCompletedData[partnerId].count++;
-        partnerCompletedData[partnerId].revenue += order.customer_invoices?.grand_total || 0;
+        partnerCompletedData[partnerId].revenue += order.construction_amount || 0;
       });
 
       Object.entries(partnerCompletedData).forEach(([partnerIdStr, data]) => {
@@ -391,7 +391,7 @@ export async function GET(request: NextRequest) {
         const partnerCompleted = monthCompletedOrders.filter((o) => o.quotations.partners.id === partnerId);
 
         const revenue = partnerCompleted.reduce(
-          (sum, order) => sum + (order.customer_invoices?.grand_total || 0),
+          (sum, order) => sum + (order.construction_amount || 0),
           0
         );
 
@@ -432,7 +432,7 @@ export async function GET(request: NextRequest) {
       const completedCount = completedOrders.length;
 
       const projectTotalAmount = completedOrders.reduce(
-        (sum, order) => sum + (order.customer_invoices?.grand_total || 0),
+        (sum, order) => sum + (order.construction_amount || 0),
         0
       );
 
