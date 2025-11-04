@@ -94,10 +94,7 @@ export default function AdminDashboardPage() {
     project_fee_rate: null,
   });
 
-  // KPI・グラフ用の期間選択
-  const [kpiPeriod, setKpiPeriod] = useState<'6_months' | '12_months' | 'all'>('12_months');
-
-  // 加盟店別サマリー用の日付範囲（デフォルト：過去3ヶ月）
+  // 表示期間（デフォルト：過去3ヶ月）
   const now = new Date();
   const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1); // 3ヶ月前の1日
   const [partnerStartYear, setPartnerStartYear] = useState(threeMonthsAgo.getFullYear());
@@ -109,18 +106,18 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     fetchDashboardData();
-  }, [kpiPeriod]);
+  }, []);
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
 
-      // 加盟店別サマリー用の日付範囲を作成
-      const partnerStartDate = `${partnerStartYear}-${String(partnerStartMonth).padStart(2, '0')}-${String(partnerStartDay).padStart(2, '0')}`;
-      const partnerEndDate = `${partnerEndYear}-${String(partnerEndMonth).padStart(2, '0')}-${String(partnerEndDay).padStart(2, '0')}`;
+      // 表示期間の日付範囲を作成（KPI・グラフ・加盟店別サマリー共通）
+      const startDate = `${partnerStartYear}-${String(partnerStartMonth).padStart(2, '0')}-${String(partnerStartDay).padStart(2, '0')}`;
+      const endDate = `${partnerEndYear}-${String(partnerEndMonth).padStart(2, '0')}-${String(partnerEndDay).padStart(2, '0')}`;
 
       const res = await fetch(
-        `/api/admin/dashboard?chart_period=${kpiPeriod}&partner_start_date=${partnerStartDate}&partner_end_date=${partnerEndDate}`
+        `/api/admin/dashboard?partner_start_date=${startDate}&partner_end_date=${endDate}`
       );
       const data = await res.json();
 
@@ -265,45 +262,6 @@ export default function AdminDashboardPage() {
             <h1 className="text-3xl font-bold text-gray-900">運営ダッシュボード</h1>
           </div>
 
-          {/* KPI・グラフ期間選択ボタン */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
-            <div className="flex items-center gap-4">
-              <span className="text-sm font-semibold text-gray-700">KPI・グラフ表示期間:</span>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setKpiPeriod('12_months')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    kpiPeriod === '12_months'
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  直近1年
-                </button>
-                <button
-                  onClick={() => setKpiPeriod('6_months')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    kpiPeriod === '6_months'
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  直近半年
-                </button>
-                <button
-                  onClick={() => setKpiPeriod('all')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    kpiPeriod === 'all'
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  全期間
-                </button>
-              </div>
-            </div>
-          </div>
-
           {/* 全体KPIサマリー - コンパクトバー */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
             <div className="grid grid-cols-7 divide-x divide-gray-200">
@@ -370,95 +328,10 @@ export default function AdminDashboardPage() {
           {/* 加盟店別サマリー */}
           <Card>
             <CardHeader>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <CardTitle>加盟店別サマリー</CardTitle>
-
-                {/* 期間プリセットボタン */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm font-semibold text-gray-700 mr-2">期間選択:</span>
-                  <button
-                    onClick={() => {
-                      const now = new Date();
-                      setPartnerStartYear(now.getFullYear());
-                      setPartnerStartMonth(now.getMonth() + 1);
-                      setPartnerStartDay(1);
-                      setPartnerEndYear(now.getFullYear());
-                      setPartnerEndMonth(now.getMonth() + 1);
-                      setPartnerEndDay(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate());
-                      setTimeout(fetchDashboardData, 0);
-                    }}
-                    className="px-3 py-1.5 bg-white border-2 border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-orange-400 transition-all font-medium text-sm"
-                  >
-                    当月
-                  </button>
-                  <button
-                    onClick={() => {
-                      const now = new Date();
-                      const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1);
-                      setPartnerStartYear(threeMonthsAgo.getFullYear());
-                      setPartnerStartMonth(threeMonthsAgo.getMonth() + 1);
-                      setPartnerStartDay(1);
-                      setPartnerEndYear(now.getFullYear());
-                      setPartnerEndMonth(now.getMonth() + 1);
-                      setPartnerEndDay(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate());
-                      setTimeout(fetchDashboardData, 0);
-                    }}
-                    className="px-3 py-1.5 bg-orange-500 border-2 border-orange-500 text-white rounded-md hover:bg-orange-600 transition-all font-medium text-sm shadow-sm"
-                  >
-                    直近3ヶ月（推奨）
-                  </button>
-                  <button
-                    onClick={() => {
-                      const now = new Date();
-                      const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-                      setPartnerStartYear(sixMonthsAgo.getFullYear());
-                      setPartnerStartMonth(sixMonthsAgo.getMonth() + 1);
-                      setPartnerStartDay(1);
-                      setPartnerEndYear(now.getFullYear());
-                      setPartnerEndMonth(now.getMonth() + 1);
-                      setPartnerEndDay(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate());
-                      setTimeout(fetchDashboardData, 0);
-                    }}
-                    className="px-3 py-1.5 bg-white border-2 border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-orange-400 transition-all font-medium text-sm"
-                  >
-                    直近半年
-                  </button>
-                  <button
-                    onClick={() => {
-                      const now = new Date();
-                      const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), 1);
-                      setPartnerStartYear(oneYearAgo.getFullYear());
-                      setPartnerStartMonth(oneYearAgo.getMonth() + 1);
-                      setPartnerStartDay(1);
-                      setPartnerEndYear(now.getFullYear());
-                      setPartnerEndMonth(now.getMonth() + 1);
-                      setPartnerEndDay(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate());
-                      setTimeout(fetchDashboardData, 0);
-                    }}
-                    className="px-3 py-1.5 bg-white border-2 border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-orange-400 transition-all font-medium text-sm"
-                  >
-                    直近1年
-                  </button>
-                  <button
-                    onClick={() => {
-                      const now = new Date();
-                      setPartnerStartYear(2020);
-                      setPartnerStartMonth(1);
-                      setPartnerStartDay(1);
-                      setPartnerEndYear(now.getFullYear());
-                      setPartnerEndMonth(now.getMonth() + 1);
-                      setPartnerEndDay(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate());
-                      setTimeout(fetchDashboardData, 0);
-                    }}
-                    className="px-3 py-1.5 bg-white border-2 border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-orange-400 transition-all font-medium text-sm"
-                  >
-                    全期間
-                  </button>
-                </div>
-
-                {/* 詳細な日付選択 */}
                 <div className="flex flex-wrap items-center gap-3 text-sm">
-                  <span className="font-semibold text-gray-700">詳細指定:</span>
+                  <span className="font-semibold text-gray-700">表示期間:</span>
 
                   {/* 開始日 */}
                   <div className="flex items-center gap-2">

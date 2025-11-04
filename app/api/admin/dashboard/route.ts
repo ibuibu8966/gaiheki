@@ -11,53 +11,33 @@ export async function GET(request: NextRequest) {
     if (error) return error;
 
     const { searchParams } = new URL(request.url);
-    const chartPeriod = searchParams.get('chart_period') || '6_months';
     const partnerStartDateParam = searchParams.get('partner_start_date');
     const partnerEndDateParam = searchParams.get('partner_end_date');
 
-    // 加盟店別サマリー用の期間計算
-    let partnerStartDate: Date;
-    let partnerEndDate: Date;
+    // 表示期間の計算（KPI・グラフ・加盟店別サマリー共通）
+    let startDate: Date;
+    let endDate: Date;
     const now = new Date();
 
     if (partnerStartDateParam && partnerEndDateParam) {
       // カスタム期間
-      partnerStartDate = new Date(partnerStartDateParam);
-      partnerEndDate = new Date(partnerEndDateParam);
-      partnerEndDate.setHours(23, 59, 59, 999);
+      startDate = new Date(partnerStartDateParam);
+      endDate = new Date(partnerEndDateParam);
+      endDate.setHours(23, 59, 59, 999);
     } else {
-      // デフォルト: 当月
-      partnerStartDate = new Date(now.getFullYear(), now.getMonth(), 1);
-      partnerEndDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+      // デフォルト: 直近3ヶ月
+      startDate = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
     }
 
-    // グラフ用の期間計算
-    let chartMonths = 6;
-    let chartStartDate: Date;
+    // 期間を共通変数に設定
+    const partnerStartDate = startDate;
+    const partnerEndDate = endDate;
+    const chartStartDate = startDate;
 
-    if (chartPeriod === 'all') {
-      // 全期間: 最初のパートナー登録日から現在まで
-      const firstPartner = await prisma.partners.findFirst({
-        orderBy: { created_at: 'asc' },
-      });
-
-      if (firstPartner) {
-        chartStartDate = new Date(firstPartner.created_at.getFullYear(), firstPartner.created_at.getMonth(), 1);
-        chartMonths = (now.getFullYear() - chartStartDate.getFullYear()) * 12 +
-                      (now.getMonth() - chartStartDate.getMonth()) + 1;
-      } else {
-        // パートナーがいない場合は現在月のみ
-        chartStartDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        chartMonths = 1;
-      }
-    } else if (chartPeriod === '12_months') {
-      chartMonths = 12;
-      chartStartDate = new Date(now.getFullYear(), now.getMonth() - (chartMonths - 1), 1);
-    } else {
-      // 6_months (直近半年)
-      chartMonths = 6;
-      chartStartDate = new Date(now.getFullYear(), now.getMonth() - (chartMonths - 1), 1);
-    }
+    // グラフ用の月数を計算
+    const chartMonths = (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+                        (endDate.getMonth() - startDate.getMonth()) + 1;
 
     // 全加盟店を取得
     const partners = await prisma.partners.findMany({
