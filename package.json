@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && prisma migrate deploy && next build",
     "build:local": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" next build",
     "build:win": "set NODE_OPTIONS=--max-old-space-size=4096 && next build",
     "start": "next start",
@@ -17,7 +17,8 @@
     "prisma:migrate:reset": "prisma migrate reset",
     "prisma:seed": "tsx prisma/seed.ts",
     "prisma:studio": "prisma studio",
-    "admin:create": "tsx scripts/create-default-admin.ts"
+    "admin:create": "tsx scripts/create-default-admin.ts",
+    "postinstall": "prisma generate"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
