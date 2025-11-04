@@ -489,7 +489,7 @@ export default function AdminDashboardPage() {
                           className="text-right cursor-pointer hover:bg-gray-100 font-semibold text-gray-700"
                           onClick={() => handleSort('completed')}
                         >
-                          施工完了件数 {sortKey === 'completed' && (sortOrder === 'asc' ? '↑' : '↓')}
+                          請求書発行件数 {sortKey === 'completed' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </TableHead>
                         <TableHead
                           className="text-right cursor-pointer hover:bg-gray-100 font-semibold text-gray-700"
