@@ -370,10 +370,95 @@ export default function AdminDashboardPage() {
           {/* 加盟店別サマリー */}
           <Card>
             <CardHeader>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div className="flex flex-col gap-4">
                 <CardTitle>加盟店別サマリー</CardTitle>
+
+                {/* 期間プリセットボタン */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-semibold text-gray-700 mr-2">期間選択:</span>
+                  <button
+                    onClick={() => {
+                      const now = new Date();
+                      setPartnerStartYear(now.getFullYear());
+                      setPartnerStartMonth(now.getMonth() + 1);
+                      setPartnerStartDay(1);
+                      setPartnerEndYear(now.getFullYear());
+                      setPartnerEndMonth(now.getMonth() + 1);
+                      setPartnerEndDay(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate());
+                      setTimeout(fetchDashboardData, 0);
+                    }}
+                    className="px-3 py-1.5 bg-white border-2 border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-orange-400 transition-all font-medium text-sm"
+                  >
+                    当月
+                  </button>
+                  <button
+                    onClick={() => {
+                      const now = new Date();
+                      const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+                      setPartnerStartYear(threeMonthsAgo.getFullYear());
+                      setPartnerStartMonth(threeMonthsAgo.getMonth() + 1);
+                      setPartnerStartDay(1);
+                      setPartnerEndYear(now.getFullYear());
+                      setPartnerEndMonth(now.getMonth() + 1);
+                      setPartnerEndDay(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate());
+                      setTimeout(fetchDashboardData, 0);
+                    }}
+                    className="px-3 py-1.5 bg-orange-500 border-2 border-orange-500 text-white rounded-md hover:bg-orange-600 transition-all font-medium text-sm shadow-sm"
+                  >
+                    直近3ヶ月（推奨）
+                  </button>
+                  <button
+                    onClick={() => {
+                      const now = new Date();
+                      const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+                      setPartnerStartYear(sixMonthsAgo.getFullYear());
+                      setPartnerStartMonth(sixMonthsAgo.getMonth() + 1);
+                      setPartnerStartDay(1);
+                      setPartnerEndYear(now.getFullYear());
+                      setPartnerEndMonth(now.getMonth() + 1);
+                      setPartnerEndDay(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate());
+                      setTimeout(fetchDashboardData, 0);
+                    }}
+                    className="px-3 py-1.5 bg-white border-2 border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-orange-400 transition-all font-medium text-sm"
+                  >
+                    直近半年
+                  </button>
+                  <button
+                    onClick={() => {
+                      const now = new Date();
+                      const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), 1);
+                      setPartnerStartYear(oneYearAgo.getFullYear());
+                      setPartnerStartMonth(oneYearAgo.getMonth() + 1);
+                      setPartnerStartDay(1);
+                      setPartnerEndYear(now.getFullYear());
+                      setPartnerEndMonth(now.getMonth() + 1);
+                      setPartnerEndDay(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate());
+                      setTimeout(fetchDashboardData, 0);
+                    }}
+                    className="px-3 py-1.5 bg-white border-2 border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-orange-400 transition-all font-medium text-sm"
+                  >
+                    直近1年
+                  </button>
+                  <button
+                    onClick={() => {
+                      const now = new Date();
+                      setPartnerStartYear(2020);
+                      setPartnerStartMonth(1);
+                      setPartnerStartDay(1);
+                      setPartnerEndYear(now.getFullYear());
+                      setPartnerEndMonth(now.getMonth() + 1);
+                      setPartnerEndDay(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate());
+                      setTimeout(fetchDashboardData, 0);
+                    }}
+                    className="px-3 py-1.5 bg-white border-2 border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-orange-400 transition-all font-medium text-sm"
+                  >
+                    全期間
+                  </button>
+                </div>
+
+                {/* 詳細な日付選択 */}
                 <div className="flex flex-wrap items-center gap-3 text-sm">
-                  <span className="font-semibold text-gray-700">表示期間:</span>
+                  <span className="font-semibold text-gray-700">詳細指定:</span>
 
                   {/* 開始日 */}
                   <div className="flex items-center gap-2">
