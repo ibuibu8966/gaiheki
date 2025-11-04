@@ -35,68 +35,71 @@ export async function GET(
       }
     });
 
-    // 各パートナーのレビューをordersテーブルから取得
-    const partnersWithRating = await Promise.all(
-      partnerPrefectures.map(async (pp) => {
-        const partner = pp.partners;
+    // パートナーIDのリストを取得
+    const partnerIds = partnerPrefectures.map(pp => pp.partners.id);
 
-        // レビューがある完了案件を取得
-        const orders = await prisma.orders.findMany({
-          where: {
-            order_status: 'COMPLETED',
-            quotations: {
-              partner_id: partner.id,
-              is_selected: true,
-              diagnosis_requests: {
-                customers: {
-                  customer_rating: {
-                    not: null
-                  }
-                }
-              }
-            }
-          },
+    // 全パートナーの完了案件を一度に取得（クエリ最適化）
+    const allOrders = await prisma.orders.findMany({
+      where: {
+        order_status: {
+          in: ['COMPLETED', 'REVIEW_COMPLETED'] // 施工完了と評価完了
+        }
+      },
+      include: {
+        quotations: {
           include: {
-            quotations: {
+            diagnosis_requests: {
               include: {
-                diagnosis_requests: {
-                  include: {
-                    customers: {
-                      select: {
-                        customer_rating: true
-                      }
-                    }
+                customers: {
+                  select: {
+                    customer_rating: true
                   }
                 }
               }
             }
           }
-        });
+        }
+      }
+    });
 
-        // 評価を集計
-        const ratings = orders
-          .map(order => order.quotations.diagnosis_requests.customers.customer_rating)
-          .filter((r): r is number => r !== null);
+    // パートナーごとに評価を集計
+    const partnersWithRating = partnerPrefectures.map((pp) => {
+      const partner = pp.partners;
 
-        const averageRating = ratings.length > 0
-          ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
-          : 0;
+      // このパートナーの注文のみフィルタして評価を収集
+      const ratings: number[] = [];
 
-        const reviewCount = ratings.length;
+      allOrders.forEach(order => {
+        // quotationsは1対1のリレーションなので単一オブジェクト
+        const quotation = order.quotations;
 
-        return {
-          id: partner.id,
-          companyName: partner.partner_details?.company_name || '',
-          address: partner.partner_details?.address || '',
-          phoneNumber: partner.partner_details?.phone_number || '',
-          appealText: partner.partner_details?.appeal_text || '',
-          businessDescription: partner.partner_details?.business_description || '',
-          websiteUrl: partner.partner_details?.website_url || null,
-          averageRating: Math.round(averageRating * 10) / 10, // 小数点1桁
-          reviewCount
-        };
-      })
-    );
+        // このパートナーの選択済み見積もりかチェック
+        if (quotation.partner_id === partner.id && quotation.is_selected === true) {
+          const rating = quotation.diagnosis_requests.customers.customer_rating;
+          if (rating !== null && rating !== undefined) {
+            ratings.push(rating);
+          }
+        }
+      });
+
+      const averageRating = ratings.length > 0
+        ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
+        : 0;
+
+      const reviewCount = ratings.length;
+
+      return {
+        id: partner.id,
+        companyName: partner.partner_details?.company_name || '',
+        address: partner.partner_details?.address || '',
+        phoneNumber: partner.partner_details?.phone_number || '',
+        appealText: partner.partner_details?.appeal_text || '',
+        businessDescription: partner.partner_details?.business_description || '',
+        websiteUrl: partner.partner_details?.website_url || null,
+        averageRating: Math.round(averageRating * 10) / 10, // 小数点1桁
+        reviewCount
+      };
+    });
 
     // 評価順（高い順）にソート
     partnersWithRating.sort((a, b) => {

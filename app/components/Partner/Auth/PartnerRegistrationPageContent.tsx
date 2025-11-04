@@ -14,6 +14,10 @@ const PartnerRegistrationPageContent = () => {
     appealPoints: ""
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [applicationNumber, setApplicationNumber] = useState("");
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -22,10 +26,129 @@ const PartnerRegistrationPageContent = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Partner registration form submitted:", formData);
+
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/partner-registration', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsSuccess(true);
+        setApplicationNumber(data.data.applicationNumber);
+        // フォームをリセット
+        setFormData({
+          companyName: "",
+          representativeName: "",
+          address: "",
+          phone: "",
+          email: "",
+          website: "",
+          businessContent: "",
+          appealPoints: ""
+        });
+        // ページをスクロールトップに
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alert(data.error || '登録に失敗しました。もう一度お試しください。');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert('登録処理中にエラーが発生しました。もう一度お試しください。');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  // 成功画面
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen relative py-8">
+        {/* 背景画像 */}
+        <div className="fixed inset-0 z-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{backgroundImage: 'url(/page-bg.jpg)'}}
+          ></div>
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm"></div>
+        </div>
+
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+            {/* チェックマークアイコン */}
+            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+              <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              申請を受け付けました
+            </h2>
+
+            <p className="text-gray-600 mb-4">
+              加盟店登録申請ありがとうございます。
+            </p>
+
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
+              <p className="text-sm text-gray-700 mb-2">申請番号</p>
+              <p className="text-2xl font-bold text-orange-600">{applicationNumber}</p>
+            </div>
+
+            <div className="text-left bg-gray-50 rounded-lg p-6 mb-6">
+              <h3 className="font-semibold text-gray-800 mb-3">今後の流れ</h3>
+              <ol className="space-y-3 text-sm text-gray-600">
+                <li className="flex items-start">
+                  <span className="bg-orange-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 text-xs">1</span>
+                  <span>担当者が申請内容を確認いたします（1〜2営業日）</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="bg-orange-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 text-xs">2</span>
+                  <span>ご登録いただいたメールアドレスまたは電話番号にご連絡いたします</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="bg-orange-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 text-xs">3</span>
+                  <span>審査完了後、加盟店契約のご案内をさせていただきます</span>
+                </li>
+              </ol>
+            </div>
+
+            <p className="text-sm text-gray-600 mb-6">
+              ご不明な点がございましたら、お気軽にお問い合わせください。
+            </p>
+
+            <button
+              onClick={() => {
+                setIsSuccess(false);
+                setApplicationNumber("");
+              }}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-8 rounded-lg transition-colors mr-4"
+            >
+              新規申請する
+            </button>
+
+            <a
+              href="/"
+              className="inline-block border border-gray-300 hover:border-gray-400 text-gray-700 font-medium py-2 px-8 rounded-lg transition-colors"
+            >
+              ホームに戻る
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen relative py-8">
@@ -82,6 +205,7 @@ const PartnerRegistrationPageContent = () => {
                   placeholder="株式会社○○塗装"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                   required
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -98,6 +222,7 @@ const PartnerRegistrationPageContent = () => {
                   placeholder="山田 太郎"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                   required
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
@@ -119,6 +244,7 @@ const PartnerRegistrationPageContent = () => {
                 placeholder="東京都渋谷区○○1-2-3"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 required
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -149,6 +275,7 @@ const PartnerRegistrationPageContent = () => {
                   placeholder="03-1234-5678"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                   required
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -168,6 +295,7 @@ const PartnerRegistrationPageContent = () => {
                   placeholder="info@example.com"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                   required
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
@@ -187,6 +315,7 @@ const PartnerRegistrationPageContent = () => {
                 onChange={handleInputChange}
                 placeholder="https://www.example.com"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -215,6 +344,7 @@ const PartnerRegistrationPageContent = () => {
                 rows={4}
                 placeholder="外壁塗装、屋根塗装、防水工事など、具体的な事業内容をご記入ください。"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-vertical"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -233,6 +363,7 @@ const PartnerRegistrationPageContent = () => {
                 rows={5}
                 placeholder="御社の強みや特徴、お客様へのアピールポイントをご記入ください。こちらの内容は業者紹介ページでも活用させていただきます。"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-vertical"
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -249,9 +380,10 @@ const PartnerRegistrationPageContent = () => {
           <div className="text-center pt-6">
             <button
               type="submit"
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-12 rounded-lg transition-colors text-lg"
+              disabled={isSubmitting}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-12 rounded-lg transition-colors text-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              この内容で申請する
+              {isSubmitting ? '送信中...' : 'この内容で申請する'}
             </button>
           </div>
         </form>
