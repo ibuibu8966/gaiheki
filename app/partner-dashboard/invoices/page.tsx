@@ -7,22 +7,12 @@ interface CustomerInvoice {
   id: number;
   invoice_number: string;
   order_id: number;
+  customer_name: string;
+  project_name: string;
   issue_date: string;
   due_date: string;
-  total_amount: number;
-  tax_amount: number;
   grand_total: number;
   status: string;
-  payment_date: string | null;
-  order: {
-    quotation: {
-      diagnosis_request: {
-        customer: {
-          customer_name: string;
-        };
-      };
-    };
-  };
 }
 
 export default function PartnerInvoicesPage() {
@@ -36,12 +26,37 @@ export default function PartnerInvoicesPage() {
   const fetchInvoices = async () => {
     try {
       const response = await fetch('/api/partner/invoices');
+
+      // 認証エラーの場合はログインページにリダイレクト
+      if (response.status === 401) {
+        window.location.href = '/auth/partner-login';
+        return;
+      }
+
       if (response.ok) {
         const data = await response.json();
-        setInvoices(data);
+
+        // APIのレスポンス形式: { success: true, data: { invoices: [...], total, page, limit } }
+        if (data.success && data.data && Array.isArray(data.data.invoices)) {
+          setInvoices(data.data.invoices);
+        } else if (Array.isArray(data)) {
+          // 後方互換性のため
+          setInvoices(data);
+        } else if (data.data && Array.isArray(data.data)) {
+          setInvoices(data.data);
+        } else if (data.invoices && Array.isArray(data.invoices)) {
+          setInvoices(data.invoices);
+        } else {
+          console.error('Unexpected data format:', data);
+          setInvoices([]);
+        }
+      } else {
+        console.error('API error:', response.status);
+        setInvoices([]);
       }
     } catch (error) {
       console.error('Error fetching invoices:', error);
+      setInvoices([]);
     } finally {
       setLoading(false);
     }
@@ -66,6 +81,29 @@ export default function PartnerInvoicesPage() {
     } catch (error) {
       console.error('Error downloading PDF:', error);
       alert('PDFのダウンロードに失敗しました');
+    }
+  };
+
+  const handleStatusChange = async (invoiceId: number, newStatus: string) => {
+    if (!confirm('ステータスを変更しますか？')) return;
+
+    try {
+      const response = await fetch(`/api/partner/invoices/${invoiceId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert('ステータスを更新しました');
+        fetchInvoices(); // リロード
+      } else {
+        alert(data.error || 'ステータスの更新に失敗しました');
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('ステータスの更新に失敗しました');
     }
   };
 
@@ -101,6 +139,12 @@ export default function PartnerInvoicesPage() {
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">顧客請求書管理</h1>
+        <Link
+          href="/partner-dashboard/invoices/new"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+        >
+          + 新規請求書作成
+        </Link>
       </div>
 
       {invoices.length === 0 ? (
@@ -142,7 +186,7 @@ export default function PartnerInvoicesPage() {
                     {invoice.invoice_number}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {invoice.order.quotation.diagnosis_request.customer.customer_name}
+                    {invoice.customer_name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {new Date(invoice.issue_date).toLocaleDateString('ja-JP')}
@@ -154,13 +198,18 @@ export default function PartnerInvoicesPage() {
                     ¥{invoice.grand_total.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                    <select
+                      value={invoice.status}
+                      onChange={(e) => handleStatusChange(invoice.id, e.target.value)}
+                      className={`px-3 py-1 rounded-md text-xs font-semibold border-0 ${getStatusColor(
                         invoice.status
                       )}`}
                     >
-                      {getStatusLabel(invoice.status)}
-                    </span>
+                      <option value="UNPAID">未払い</option>
+                      <option value="PAID">支払済</option>
+                      <option value="OVERDUE">期限切れ</option>
+                      <option value="CANCELLED">キャンセル</option>
+                    </select>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button

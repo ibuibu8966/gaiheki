@@ -36,7 +36,9 @@ export async function GET(request: NextRequest) {
     // レビューがある完了案件を取得（reviews/route.tsと同じロジック）
     const completedOrdersWithReviews = await prisma.orders.findMany({
       where: {
-        order_status: 'COMPLETED',
+        order_status: {
+          in: ['COMPLETED', 'REVIEW_COMPLETED'] // 施工完了と評価完了
+        },
         quotations: {
           partner_id: partner.id,
           is_selected: true,
@@ -82,7 +84,9 @@ export async function GET(request: NextRequest) {
           partner_id: partner.id,
           is_selected: true
         },
-        order_status: 'COMPLETED'
+        order_status: {
+          in: ['COMPLETED', 'REVIEW_COMPLETED'] // 施工完了と評価完了
+        }
       }
     });
 
@@ -102,7 +106,13 @@ export async function GET(request: NextRequest) {
       rating: parseFloat(averageRating.toFixed(1)),
       reviewCount: ratings.length,
       workCount: completedCount,
-      serviceAreas: partner.partner_prefectures.map(pp => pp.supported_prefecture)
+      serviceAreas: partner.partner_prefectures.map(pp => pp.supported_prefecture),
+      invoiceRegistrationNumber: partner.partner_details?.invoice_registration_number || '',
+      bankName: partner.partner_details?.bank_name || '',
+      bankBranchName: partner.partner_details?.bank_branch_name || '',
+      bankAccountType: partner.partner_details?.bank_account_type || '',
+      bankAccountNumber: partner.partner_details?.bank_account_number || '',
+      bankAccountHolder: partner.partner_details?.bank_account_holder || ''
     };
 
     return NextResponse.json({
@@ -149,7 +159,13 @@ export async function PATCH(request: NextRequest) {
       appeal,
       loginEmail,
       newPassword,
-      serviceAreas
+      serviceAreas,
+      invoiceRegistrationNumber,
+      bankName,
+      bankBranchName,
+      bankAccountType,
+      bankAccountNumber,
+      bankAccountHolder
     } = body;
 
     // パートナーの存在確認
@@ -219,7 +235,13 @@ export async function PATCH(request: NextRequest) {
           business_hours: businessHours || null,
           closed_days: holidays || null,
           business_description: businessContent,
-          appeal_text: appeal
+          appeal_text: appeal,
+          invoice_registration_number: invoiceRegistrationNumber || null,
+          bank_name: bankName || null,
+          bank_branch_name: bankBranchName || null,
+          bank_account_type: bankAccountType || null,
+          bank_account_number: bankAccountNumber || null,
+          bank_account_holder: bankAccountHolder || null
         }
       });
     }

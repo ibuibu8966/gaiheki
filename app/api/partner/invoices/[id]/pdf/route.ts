@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { generateCustomerInvoicePDF } from '@/lib/generateCustomerInvoicePDF';
-
-const prisma = new PrismaClient();
+import { requirePartnerAuth } from '@/lib/utils/partnerAuth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const invoiceId = parseInt(params.id);
+    const { id } = await params;
+    const invoiceId = parseInt(id);
 
-    // TODO: 実際の認証実装後、セッションからpartner_idを取得して権限チェック
-    const partnerId = 1; // 仮のID
+    // 認証チェック
+    const { error, partnerId } = await requirePartnerAuth();
+    if (error) return error;
 
     // 請求書データを取得
     const invoice = await prisma.customer_invoices.findUnique({
@@ -20,11 +21,11 @@ export async function GET(
       include: {
         order: {
           include: {
-            quotation: {
+            quotations: {
               include: {
-                diagnosis_request: {
+                diagnosis_requests: {
                   include: {
-                    customer: {
+                    customers: {
                       include: {
                         partners: {
                           include: {
@@ -51,16 +52,26 @@ export async function GET(
     }
 
     // Partner権限チェック
-    const customer = invoice.order.quotation.diagnosis_request.customer;
-    if (customer.partner_id !== partnerId) {
+    // quotationsは1対1の関係なので直接アクセス
+    const quotation = invoice.order.quotations;
+    const diagnosisRequest = quotation.diagnosis_requests;
+    const customer = diagnosisRequest.customers;
+
+    // 見積もりのpartner_idでチェック（顧客のpartner_idではなく）
+    if (quotation.partner_id !== partnerId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 403 }
       );
     }
 
-    // Partner情報を取得
-    const partnerDetails = customer.partners.partner_details;
+    // Partner情報を取得（見積もりのパートナー情報を使用）
+    const partner = await prisma.partners.findUnique({
+      where: { id: quotation.partner_id },
+      include: { partner_details: true }
+    });
+
+    const partnerDetails = partner?.partner_details;
     if (!partnerDetails) {
       return NextResponse.json(
         { error: 'Partner details not found' },
@@ -100,11 +111,14 @@ export async function GET(
     // PDFを生成
     const pdfBuffer = generateCustomerInvoicePDF(pdfData);
 
+    // ファイル名を生成（顧客名_請求書番号.pdf）
+    const filename = `${customer.customer_name}_${invoice.invoice_number}.pdf`;
+
     // PDFをレスポンスとして返す
     return new NextResponse(pdfBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="invoice_${invoiceId}.pdf"`,
+        'Content-Disposition': `attachment; filename="${encodeURIComponent(filename)}"`,
       },
     });
   } catch (error) {
@@ -115,4 +129,3 @@ export async function GET(
     );
   }
 }
-

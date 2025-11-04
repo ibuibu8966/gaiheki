@@ -87,7 +87,11 @@ const PartnerSidebar = () => {
     <aside className="w-64 min-w-64 bg-white shadow-sm flex-shrink-0 h-screen sticky top-0 flex flex-col">
       {/* サイドバーヘッダー */}
       <div className="p-6 border-b border-gray-200">
-        <h1 className="text-xl font-bold text-gray-800">加盟店ダッシュボード</h1>
+        <Link href="/partner-dashboard">
+          <h1 className="text-base font-bold text-gray-800 cursor-pointer hover:text-blue-600 transition-colors whitespace-nowrap">
+            加盟店ダッシュボード
+          </h1>
+        </Link>
       </div>
 
       {/* メニューリスト */}

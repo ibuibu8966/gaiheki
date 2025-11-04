@@ -50,14 +50,54 @@ interface DashboardData {
   status_distribution: StatusDistribution;
 }
 
+interface CompanyInvoice {
+  id: number;
+  invoice_number: string;
+  issue_date: string;
+  due_date: string;
+  billing_period_start: string;
+  billing_period_end: string;
+  total_amount: number;
+  tax_amount: number;
+  grand_total: number;
+  status: 'DRAFT' | 'UNPAID' | 'PAID' | 'OVERDUE' | 'CANCELLED';
+  payment_date: string | null;
+}
+
 export default function PartnerDashboardPage() {
   const [period, setPeriod] = useState('current_month');
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [companyInvoices, setCompanyInvoices] = useState<CompanyInvoice[]>([]);
   const [loading, setLoading] = useState(true);
+  const [invoicesLoading, setInvoicesLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboardData(period);
+    fetchCompanyInvoices();
   }, [period]);
+
+  // 日時をフォーマットする関数
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'たった今';
+    if (diffMins < 60) return `${diffMins}分前`;
+    if (diffHours < 24) return `${diffHours}時間前`;
+    if (diffDays < 7) return `${diffDays}日前`;
+
+    return date.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   const fetchDashboardData = async (selectedPeriod: string) => {
     try {
@@ -72,6 +112,56 @@ export default function PartnerDashboardPage() {
       console.error('ダッシュボードデータの取得に失敗しました:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCompanyInvoices = async () => {
+    try {
+      setInvoicesLoading(true);
+      const res = await fetch('/api/partner/company-invoices?limit=5');
+      const data = await res.json();
+
+      if (data.success) {
+        setCompanyInvoices(data.data.invoices);
+      }
+    } catch (error) {
+      console.error('会社請求書の取得に失敗しました:', error);
+    } finally {
+      setInvoicesLoading(false);
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'DRAFT':
+        return '下書き';
+      case 'UNPAID':
+        return '未払い';
+      case 'PAID':
+        return '支払済';
+      case 'OVERDUE':
+        return '期限超過';
+      case 'CANCELLED':
+        return 'キャンセル';
+      default:
+        return status;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'DRAFT':
+        return 'bg-gray-100 text-gray-700';
+      case 'UNPAID':
+        return 'bg-yellow-100 text-yellow-700';
+      case 'PAID':
+        return 'bg-green-100 text-green-700';
+      case 'OVERDUE':
+        return 'bg-red-100 text-red-700';
+      case 'CANCELLED':
+        return 'bg-gray-100 text-gray-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
     }
   };
 
@@ -280,50 +370,67 @@ export default function PartnerDashboardPage() {
         </Card>
       </div>
 
-      {/* 最近のアクティビティ */}
+      {/* 請求書履歴 */}
       <Card>
         <CardHeader>
-          <CardTitle>最近のアクティビティ</CardTitle>
+          <CardTitle>請求書履歴</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {dashboardData.kpi.inquiries === 0 &&
-            dashboardData.kpi.orders === 0 &&
-            dashboardData.kpi.completed === 0 ? (
-              <p className="text-center text-gray-500 py-8">
-                まだアクティビティがありません
-              </p>
-            ) : (
-              <div className="space-y-2">
-                {dashboardData.kpi.inquiries > 0 && (
-                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                    <span className="text-sm text-blue-700">
-                      新規問い合わせ
-                    </span>
-                    <span className="font-semibold text-blue-900">
-                      {dashboardData.kpi.inquiries}件
-                    </span>
+          {invoicesLoading ? (
+            <p className="text-center text-gray-500 py-8">読み込み中...</p>
+          ) : companyInvoices.length === 0 ? (
+            <p className="text-center text-gray-500 py-8">
+              まだ請求書がありません
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {companyInvoices.map((invoice) => (
+                <div
+                  key={invoice.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="font-semibold text-gray-900">
+                        {invoice.invoice_number}
+                      </span>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${getStatusColor(
+                          invoice.status
+                        )}`}
+                      >
+                        {getStatusLabel(invoice.status)}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <div className="flex gap-4">
+                        <span>発行日: {invoice.issue_date}</span>
+                        <span>支払期日: {invoice.due_date}</span>
+                      </div>
+                      <div className="font-semibold text-gray-900">
+                        金額: ¥{invoice.grand_total.toLocaleString()}
+                      </div>
+                    </div>
                   </div>
-                )}
-                {dashboardData.kpi.orders > 0 && (
-                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                    <span className="text-sm text-green-700">受注</span>
-                    <span className="font-semibold text-green-900">
-                      {dashboardData.kpi.orders}件
-                    </span>
+                  <div className="flex gap-2">
+                    <a
+                      href={`/partner-dashboard/company-invoices/${invoice.id}`}
+                      className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                    >
+                      閲覧
+                    </a>
+                    <a
+                      href={`/api/partner/company-invoices/${invoice.id}/pdf`}
+                      download
+                      className="px-4 py-2 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                    >
+                      ダウンロード
+                    </a>
                   </div>
-                )}
-                {dashboardData.kpi.completed > 0 && (
-                  <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                    <span className="text-sm text-purple-700">施工完了</span>
-                    <span className="font-semibold text-purple-900">
-                      {dashboardData.kpi.completed}件
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

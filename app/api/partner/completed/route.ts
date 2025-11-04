@@ -26,7 +26,9 @@ export async function GET(request: NextRequest) {
     // ログインしている加盟店の完了案件を取得
     const orders = await prisma.orders.findMany({
       where: {
-        order_status: 'COMPLETED', // 施工完了のみ
+        order_status: {
+          in: ['COMPLETED', 'REVIEW_COMPLETED'] // 施工完了と評価完了
+        },
         quotations: {
           partner_id: partnerId,
           is_selected: true
@@ -161,7 +163,9 @@ export async function PATCH(request: NextRequest) {
     const existingOrder = await prisma.orders.findFirst({
       where: {
         id: orderId,
-        order_status: 'COMPLETED', // 完了案件のみ
+        order_status: {
+          in: ['COMPLETED', 'REVIEW_COMPLETED'] // 完了案件
+        },
         quotations: {
           partner_id: partnerId
         }

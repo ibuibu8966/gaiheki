@@ -28,7 +28,10 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    console.log('Login attempt:', { email, foundPartner: !!partner });
+
     if (!partner) {
+      console.log('Partner not found or not active');
       return NextResponse.json({
         success: false,
         error: 'ログイン情報が正しくありません'
@@ -37,8 +40,10 @@ export async function POST(request: NextRequest) {
 
     // パスワードの検証
     const isPasswordValid = await bcrypt.compare(password, partner.password_hash);
+    console.log('Password validation:', { isValid: isPasswordValid });
 
     if (!isPasswordValid) {
+      console.log('Invalid password');
       return NextResponse.json({
         success: false,
         error: 'ログイン情報が正しくありません'

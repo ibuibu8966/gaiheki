@@ -24,7 +24,9 @@ export async function GET(request: NextRequest) {
     // レビューがある完了案件を取得
     const orders = await prisma.orders.findMany({
       where: {
-        order_status: 'COMPLETED',
+        order_status: {
+          in: ['COMPLETED', 'REVIEW_COMPLETED'] // 施工完了と評価完了
+        },
         quotations: {
           partner_id: partnerId,
           is_selected: true,

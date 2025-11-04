@@ -81,17 +81,26 @@ export async function GET(request: NextRequest) {
     });
 
     // レスポンス整形
-    const formattedInvoices = invoices.map((invoice) => ({
-      id: invoice.id,
-      invoice_number: invoice.invoice_number,
-      order_id: invoice.order_id,
-      customer_name: invoice.order.quotations.diagnosis_requests.customers.customer_name,
-      project_name: '外壁塗装工事', // 仮の案件名
-      grand_total: invoice.grand_total,
-      issue_date: invoice.issue_date.toISOString().split('T')[0],
-      due_date: invoice.due_date.toISOString().split('T')[0],
-      status: invoice.status,
-    }));
+    const now = new Date();
+    const formattedInvoices = invoices.map((invoice) => {
+      // 支払期限を過ぎていて未払いの場合は自動的に期限切れにする
+      let status = invoice.status;
+      if (invoice.status === 'UNPAID' && new Date(invoice.due_date) < now) {
+        status = 'OVERDUE';
+      }
+
+      return {
+        id: invoice.id,
+        invoice_number: invoice.invoice_number,
+        order_id: invoice.order_id,
+        customer_name: invoice.order?.quotations?.diagnosis_requests?.customers?.customer_name || '不明',
+        project_name: '外壁塗装工事', // 仮の案件名
+        grand_total: invoice.grand_total,
+        issue_date: invoice.issue_date.toISOString().split('T')[0],
+        due_date: invoice.due_date.toISOString().split('T')[0],
+        status: status,
+      };
+    });
 
     return NextResponse.json({
       success: true,

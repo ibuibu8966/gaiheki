@@ -54,6 +54,23 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    // 最新の問い合わせ
+    const latestInquiry = await prisma.diagnosis_requests.findFirst({
+      where: {
+        designated_partner_id: partnerId,
+        created_at: {
+          gte: dateFrom,
+          lte: dateTo,
+        },
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+      select: {
+        created_at: true,
+      },
+    });
+
     // 受注件数
     const orders = await prisma.orders.count({
       where: {
@@ -64,6 +81,25 @@ export async function GET(request: NextRequest) {
           gte: dateFrom,
           lte: dateTo,
         },
+      },
+    });
+
+    // 最新の受注
+    const latestOrder = await prisma.orders.findFirst({
+      where: {
+        quotations: {
+          partner_id: partnerId,
+        },
+        order_date: {
+          gte: dateFrom,
+          lte: dateTo,
+        },
+      },
+      orderBy: {
+        order_date: 'desc',
+      },
+      select: {
+        order_date: true,
       },
     });
 
@@ -80,6 +116,28 @@ export async function GET(request: NextRequest) {
           gte: dateFrom,
           lte: dateTo,
         },
+      },
+    });
+
+    // 最新の施工完了
+    const latestCompleted = await prisma.orders.findFirst({
+      where: {
+        quotations: {
+          partner_id: partnerId,
+        },
+        order_status: {
+          in: ['COMPLETED', 'REVIEW_COMPLETED'],
+        },
+        completion_date: {
+          gte: dateFrom,
+          lte: dateTo,
+        },
+      },
+      orderBy: {
+        completion_date: 'desc',
+      },
+      select: {
+        completion_date: true,
       },
     });
 
@@ -181,6 +239,23 @@ export async function GET(request: NextRequest) {
           revenue: revenueData._sum.grand_total || 0,
           unpaid: unpaidData._sum.grand_total || 0,
         },
+        recent_activities: [
+          ...(inquiries > 0 && latestInquiry ? [{
+            type: 'inquiry',
+            count: inquiries,
+            latest_date: latestInquiry.created_at.toISOString(),
+          }] : []),
+          ...(orders > 0 && latestOrder ? [{
+            type: 'order',
+            count: orders,
+            latest_date: latestOrder.order_date.toISOString(),
+          }] : []),
+          ...(completed > 0 && latestCompleted ? [{
+            type: 'completed',
+            count: completed,
+            latest_date: latestCompleted.completion_date!.toISOString(),
+          }] : []),
+        ].sort((a, b) => new Date(b.latest_date).getTime() - new Date(a.latest_date).getTime()),
         revenue_trend: revenueTrend,
         status_distribution: {
           inquiries,

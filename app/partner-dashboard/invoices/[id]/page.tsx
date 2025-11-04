@@ -7,16 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import dynamic from 'next/dynamic';
-
-// PDFコンポーネントは動的にインポート（SSRを無効化）
-const PDFDownloadLink = dynamic(
-  () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
-  { ssr: false, loading: () => <Button variant="outline" disabled>PDF準備中...</Button> }
-);
-const InvoicePDF = dynamic(() => import('@/app/components/Partner/Invoice/InvoicePDF'), {
-  ssr: false,
-});
+// PDFコンポーネントは使用しない（サーバーサイドで生成）
 
 interface InvoiceItem {
   id?: number;
@@ -180,6 +171,28 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
     }
   };
 
+  const handleDownloadPDF = async () => {
+    try {
+      const response = await fetch(`/api/partner/invoices/${resolvedParams.id}/pdf`);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${invoice?.invoice_number || 'invoice'}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        alert('PDFのダウンロードに失敗しました');
+      }
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      alert('PDFのダウンロードに失敗しました');
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const variants: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
       DRAFT: 'secondary',
@@ -233,50 +246,27 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
           <p className="text-gray-600 mt-1">{getStatusBadge(invoice.status)}</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.back()}>
+          <Button onClick={() => router.back()}>
             戻る
           </Button>
+          {!editing && invoice.status !== 'PAID' && invoice.status !== 'CANCELLED' && (
+            <Button onClick={() => setEditing(true)}>
+              編集
+            </Button>
+          )}
           {invoice.status === 'DRAFT' && !editing && (
-            <>
-              <Button variant="outline" onClick={() => setEditing(true)}>
-                編集
-              </Button>
-              <Button onClick={handleIssue}>
-                発行
-              </Button>
-            </>
+            <Button onClick={handleIssue}>
+              発行
+            </Button>
           )}
           {invoice.status === 'UNPAID' && (
             <Button onClick={handlePaid}>
               入金確認
             </Button>
           )}
-          <PDFDownloadLink
-            document={
-              <InvoicePDF
-                invoice={{
-                  invoice_number: invoice.invoice_number,
-                  customer: invoice.customer,
-                  issue_date: invoice.issue_date,
-                  due_date: invoice.due_date,
-                  items: invoice.items,
-                  total_amount: invoice.total_amount,
-                  tax_amount: invoice.tax_amount,
-                  grand_total: invoice.grand_total,
-                  company_name: invoice.partner_details?.company_name,
-                  company_address: invoice.partner_details?.address,
-                  company_phone: invoice.partner_details?.phone_number,
-                }}
-              />
-            }
-            fileName={`${invoice.invoice_number}.pdf`}
-          >
-            {({ loading }) => (
-              <Button variant="outline" disabled={loading}>
-                {loading ? 'PDF準備中...' : 'PDF出力'}
-              </Button>
-            )}
-          </PDFDownloadLink>
+          <Button onClick={handleDownloadPDF}>
+            PDF出力
+          </Button>
         </div>
       </div>
 
@@ -347,7 +337,7 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
           <div className="flex justify-between items-center">
             <CardTitle>請求項目</CardTitle>
             {editing && (
-              <Button type="button" variant="outline" size="sm" onClick={addItem}>
+              <Button type="button" size="sm" onClick={addItem}>
                 + 項目を追加
               </Button>
             )}
@@ -441,15 +431,15 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
-            <span>小計（税抜）:</span>
+            <span>小計（税抜）：</span>
             <span className="font-medium">¥{totalAmount.toLocaleString()}</span>
           </div>
           <div className="flex justify-between">
-            <span>消費税（10%）:</span>
+            <span>消費税（10%）：</span>
             <span className="font-medium">¥{taxAmount.toLocaleString()}</span>
           </div>
           <div className="flex justify-between text-lg font-bold border-t pt-2">
-            <span>合計（税込）:</span>
+            <span>合計（税込）：</span>
             <span>¥{grandTotal.toLocaleString()}</span>
           </div>
         </CardContent>

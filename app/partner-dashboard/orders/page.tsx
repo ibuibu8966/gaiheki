@@ -7,6 +7,7 @@ const STATUS_LABELS: Record<string, string> = {
   ORDERED: "受注",
   IN_PROGRESS: "施工中",
   COMPLETED: "施工完了",
+  REVIEW_COMPLETED: "評価完了",
   CANCELLED: "キャンセル"
 };
 
@@ -311,12 +312,12 @@ export default function OrdersPage() {
                       <td className="px-4 py-4 text-sm text-gray-900">{order.customerEmail}</td>
                       <td className="px-4 py-4 text-sm">
                         <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                          order.orderStatus === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                          order.orderStatus === 'COMPLETED' || order.orderStatus === 'REVIEW_COMPLETED' ? 'bg-green-100 text-green-800' :
                           order.orderStatus === 'IN_PROGRESS' ? 'bg-yellow-100 text-yellow-800' :
                           order.orderStatus === 'ORDERED' ? 'bg-blue-100 text-blue-800' :
                           'bg-gray-100 text-gray-800'
                         }`}>
-                          {STATUS_LABELS[order.orderStatus]}
+                          {STATUS_LABELS[order.orderStatus] || order.orderStatus}
                         </span>
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-900">

@@ -22,14 +22,32 @@ export async function GET(request: NextRequest) {
     // URLパラメータからステータスフィルタを取得
     const { searchParams } = new URL(request.url);
     const statusFilter = searchParams.get('status');
+    const excludeInvoiced = searchParams.get('excludeInvoiced'); // 請求書発行済みを除外
+    const includeCompleted = searchParams.get('includeCompleted'); // 完了案件を含める
 
     // ステータス条件の構築
-    const statusCondition: any = statusFilter ? { order_status: statusFilter } : {};
+    let statusCondition: any;
+    if (includeCompleted === 'true') {
+      // 完了案件（施工完了と評価完了）を取得
+      statusCondition = { order_status: { in: ['COMPLETED', 'REVIEW_COMPLETED'] } };
+    } else if (statusFilter) {
+      // 特定のステータスを取得
+      statusCondition = { order_status: statusFilter };
+    } else {
+      // デフォルト: 受注と施工中のみ
+      statusCondition = { order_status: { in: ['ORDERED', 'IN_PROGRESS'] } };
+    }
+
+    // 請求書未発行の条件を追加（1対1の関係なのでnullチェック）
+    const invoiceCondition: any = excludeInvoiced === 'true' ? {
+      customer_invoices: null // customer_invoicesが存在しない（請求書未発行）
+    } : {};
 
     // ログインしている加盟店が受注している案件を取得
     const orders = await prisma.orders.findMany({
       where: {
         ...statusCondition,
+        ...invoiceCondition,
         quotations: {
           partner_id: partnerId,
           is_selected: true // 選択された見積もりのみ

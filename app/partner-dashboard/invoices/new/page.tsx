@@ -18,14 +18,8 @@ interface InvoiceItem {
 
 interface Order {
   id: number;
-  quotations: {
-    diagnosis_requests: {
-      customers: {
-        customer_name: string;
-      };
-    };
-  };
-  construction_amount: number;
+  customerName: string;
+  constructionAmount: number;
 }
 
 export default function NewInvoicePage() {
@@ -45,8 +39,8 @@ export default function NewInvoicePage() {
 
   const fetchOrders = async () => {
     try {
-      // 施工完了済みで請求書未作成の受注を取得
-      const res = await fetch('/api/partner/orders?status=COMPLETED');
+      // 施工完了済み（COMPLETED, REVIEW_COMPLETED）で請求書未作成の受注を取得
+      const res = await fetch('/api/partner/orders?includeCompleted=true&excludeInvoiced=true');
       const data = await res.json();
       if (data.success) {
         setOrders(data.data || []);
@@ -121,9 +115,6 @@ export default function NewInvoicePage() {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">請求書作成</h1>
-        <Button variant="outline" onClick={() => router.back()}>
-          キャンセル
-        </Button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -142,7 +133,7 @@ export default function NewInvoicePage() {
                 <SelectContent>
                   {orders.map((order) => (
                     <SelectItem key={order.id} value={order.id.toString()}>
-                      受注ID: {order.id} - {order.quotations?.diagnosis_requests?.customers?.customer_name || '不明'}
+                      受注ID: {order.id} - {order.customerName} - ¥{order.constructionAmount?.toLocaleString() || '0'}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -179,9 +170,13 @@ export default function NewInvoicePage() {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>請求項目</CardTitle>
-              <Button type="button" variant="outline" size="sm" onClick={addItem}>
+              <button
+                type="button"
+                onClick={addItem}
+                className="px-3 py-1.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              >
                 + 項目を追加
-              </Button>
+              </button>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -273,12 +268,20 @@ export default function NewInvoicePage() {
 
         {/* アクション */}
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => router.back()}>
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="px-4 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          >
             キャンセル
-          </Button>
-          <Button type="submit" disabled={loading}>
+          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {loading ? '作成中...' : '下書き保存'}
-          </Button>
+          </button>
         </div>
       </form>
     </div>

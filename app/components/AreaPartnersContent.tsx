@@ -32,15 +32,24 @@ const AreaPartnersContent = ({ prefecture, prefectureName }: AreaPartnersContent
     try {
       setLoading(true);
       const response = await fetch(`/api/areas/${prefecture}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const result = await response.json();
 
       if (result.success) {
-        setPartners(result.data);
+        setPartners(result.data || []);
       } else {
         console.error("Failed to fetch partners:", result.error);
+        alert(`加盟店の取得に失敗しました: ${result.message || result.error}`);
+        setPartners([]);
       }
     } catch (error) {
       console.error("Error fetching partners:", error);
+      alert('加盟店の取得中にエラーが発生しました。しばらく待ってから再度お試しください。');
+      setPartners([]);
     } finally {
       setLoading(false);
     }
