@@ -142,7 +142,7 @@ const DesignatedDiagnosisForm = ({ partnerId, partnerName, supportedPrefectures,
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#f16f21]"
             placeholder="山田 太郎"
           />
         </div>
@@ -157,7 +157,7 @@ const DesignatedDiagnosisForm = ({ partnerId, partnerName, supportedPrefectures,
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#f16f21]"
             placeholder="090-1234-5678"
           />
         </div>
@@ -172,7 +172,7 @@ const DesignatedDiagnosisForm = ({ partnerId, partnerName, supportedPrefectures,
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#f16f21]"
             placeholder="example@email.com"
           />
         </div>
@@ -186,7 +186,7 @@ const DesignatedDiagnosisForm = ({ partnerId, partnerName, supportedPrefectures,
             value={formData.prefecture}
             onChange={(e) => setFormData({ ...formData, prefecture: e.target.value })}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#f16f21]"
           >
             <option value="">選択してください</option>
             {prefectures
@@ -212,7 +212,7 @@ const DesignatedDiagnosisForm = ({ partnerId, partnerName, supportedPrefectures,
           <select
             value={formData.floorArea}
             onChange={(e) => setFormData({ ...formData, floorArea: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#f16f21]"
           >
             <option value="UNKNOWN">わからない</option>
             <option value="UNDER_80">80㎡未満</option>
@@ -237,7 +237,7 @@ const DesignatedDiagnosisForm = ({ partnerId, partnerName, supportedPrefectures,
           <select
             value={formData.currentSituation}
             onChange={(e) => setFormData({ ...formData, currentSituation: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#f16f21]"
           >
             <option value="MARKET_RESEARCH">情報収集中</option>
             <option value="CONSIDERING_CONSTRUCTION">工事を検討中</option>
@@ -254,7 +254,7 @@ const DesignatedDiagnosisForm = ({ partnerId, partnerName, supportedPrefectures,
           <select
             value={formData.constructionType}
             onChange={(e) => setFormData({ ...formData, constructionType: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#f16f21]"
           >
             <option value="EXTERIOR_PAINTING">外壁塗装</option>
             <option value="ROOF_PAINTING">屋根塗装</option>
@@ -273,7 +273,7 @@ const DesignatedDiagnosisForm = ({ partnerId, partnerName, supportedPrefectures,
           className={`w-full py-3 rounded-lg font-bold text-white transition-colors ${
             isSubmitting
               ? "bg-gray-400 cursor-not-allowed"
-              : "bg-orange-500 hover:bg-orange-600"
+              : "bg-[#f16f21] hover:bg-[#e05a10]"
           }`}
         >
           {isSubmitting ? "送信中..." : "この業者に診断を申し込む"}

@@ -87,7 +87,7 @@ const DiagnosisForm = () => {
             {/* お名前 */}
             <div className="group">
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                お名前 <span className="text-blue-600 text-xs">*</span>
+                お名前 <span className="text-[#f16f21] text-xs">*</span>
               </label>
               <input
                 type="text"
@@ -95,7 +95,7 @@ const DiagnosisForm = () => {
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="山田 太郎"
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 placeholder-slate-400 transition-all duration-300"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f16f21] focus:border-[#f16f21] text-slate-900 placeholder-slate-400 transition-all duration-300"
                 required
               />
             </div>
@@ -103,13 +103,13 @@ const DiagnosisForm = () => {
             {/* 都道府県 */}
             <div className="group">
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                都道府県 <span className="text-blue-600 text-xs">*</span>
+                都道府県 <span className="text-[#f16f21] text-xs">*</span>
               </label>
               <select
                 name="prefecture"
                 value={formData.prefecture}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 transition-all duration-300 hover:border-amber-500/50 shadow-sm"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f16f21] focus:border-[#f16f21] text-slate-900 transition-all duration-300 hover:border-[#f16f21]/50 shadow-sm"
                 required
               >
                 <option value="">選択してください</option>
@@ -166,13 +166,13 @@ const DiagnosisForm = () => {
             {/* 延床面積 */}
             <div className="group">
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                延床面積 <span className="text-blue-600 text-xs">*</span>
+                延床面積 <span className="text-[#f16f21] text-xs">*</span>
               </label>
               <select
                 name="floorArea"
                 value={formData.floorArea}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 transition-all duration-300 hover:border-amber-500/50 shadow-sm"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f16f21] focus:border-[#f16f21] text-slate-900 transition-all duration-300 hover:border-[#f16f21]/50 shadow-sm"
                 required
               >
                 <option value="">選択してください</option>
@@ -191,13 +191,13 @@ const DiagnosisForm = () => {
             {/* 現在の状況 */}
             <div className="group">
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                現在の状況 <span className="text-blue-600 text-xs">*</span>
+                現在の状況 <span className="text-[#f16f21] text-xs">*</span>
               </label>
               <select
                 name="currentSituation"
                 value={formData.currentSituation}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 transition-all duration-300 hover:border-amber-500/50 shadow-sm"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f16f21] focus:border-[#f16f21] text-slate-900 transition-all duration-300 hover:border-[#f16f21]/50 shadow-sm"
                 required
               >
                 <option value="">選択してください</option>
@@ -211,13 +211,13 @@ const DiagnosisForm = () => {
             {/* 工事種別 */}
             <div className="group">
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                工事種別 <span className="text-blue-600 text-xs">*</span>
+                工事種別 <span className="text-[#f16f21] text-xs">*</span>
               </label>
               <select
                 name="constructionType"
                 value={formData.constructionType}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 transition-all duration-300 hover:border-amber-500/50 shadow-sm"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f16f21] focus:border-[#f16f21] text-slate-900 transition-all duration-300 hover:border-[#f16f21]/50 shadow-sm"
                 required
               >
                 <option value="">選択してください</option>
@@ -234,7 +234,7 @@ const DiagnosisForm = () => {
             {/* 電話番号 */}
             <div className="group">
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                電話番号 <span className="text-blue-600 text-xs">*</span>
+                電話番号 <span className="text-[#f16f21] text-xs">*</span>
               </label>
               <input
                 type="tel"
@@ -242,7 +242,7 @@ const DiagnosisForm = () => {
                 value={formData.phone}
                 onChange={handleInputChange}
                 placeholder="090-1234-5678"
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 placeholder-gray-400 transition-all duration-300 hover:border-amber-500/50 shadow-sm"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f16f21] focus:border-[#f16f21] text-slate-900 placeholder-gray-400 transition-all duration-300 hover:border-[#f16f21]/50 shadow-sm"
                 required
               />
             </div>
@@ -250,7 +250,7 @@ const DiagnosisForm = () => {
             {/* メールアドレス */}
             <div className="group">
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                メールアドレス <span className="text-blue-600 text-xs">*</span>
+                メールアドレス <span className="text-[#f16f21] text-xs">*</span>
               </label>
               <input
                 type="email"
@@ -258,7 +258,7 @@ const DiagnosisForm = () => {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="example@email.com"
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 placeholder-gray-400 transition-all duration-300 hover:border-amber-500/50 shadow-sm"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f16f21] focus:border-[#f16f21] text-slate-900 placeholder-gray-400 transition-all duration-300 hover:border-[#f16f21]/50 shadow-sm"
                 required
               />
             </div>
@@ -268,7 +268,7 @@ const DiagnosisForm = () => {
           <div className="text-center pt-4 md:pt-6">
             <button
               type="submit"
-              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 md:py-4 px-8 md:px-12 rounded-full text-sm md:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              className="w-full md:w-auto bg-[#f16f21] hover:bg-[#e05a10] text-white font-bold py-3.5 md:py-4 px-8 md:px-12 rounded-full text-sm md:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
               無料診断を開始する
             </button>

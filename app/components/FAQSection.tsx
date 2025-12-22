@@ -51,7 +51,7 @@ const FAQSection = () => {
                 className="w-full px-6 py-5 text-left hover:bg-slate-50 transition-all duration-300 flex items-center justify-between"
               >
                 <div className="flex items-center gap-4">
-                  <span className="bg-blue-600 text-white text-sm font-bold px-3 py-1.5 rounded-lg">
+                  <span className="bg-[#f16f21] text-white text-sm font-bold px-3 py-1.5 rounded-lg">
                     Q
                   </span>
                   <span className="font-bold text-slate-900">{faq.question}</span>

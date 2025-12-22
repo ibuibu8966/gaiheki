@@ -115,7 +115,7 @@ const AreaPartnersContent = ({ prefecture, prefectureName }: AreaPartnersContent
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* パンくずナビ */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center text-gray-600 hover:text-orange-500 transition-colors">
+          <Link href="/" className="inline-flex items-center text-gray-600 hover:text-[#f16f21] transition-colors">
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
             </svg>
@@ -181,7 +181,7 @@ const AreaPartnersContent = ({ prefecture, prefectureName }: AreaPartnersContent
                   <div className="flex gap-3">
                     <Link
                       href={`/partners/${partner.id}`}
-                      className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+                      className="bg-[#f16f21] hover:bg-[#e05a10] text-white font-medium py-2 px-6 rounded-lg transition-colors"
                     >
                       詳細を見る
                     </Link>

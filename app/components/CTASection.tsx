@@ -29,13 +29,13 @@ const CTASection = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10 animate-scale-in" style={{animationDelay: '0.2s'}}>
           <button
             onClick={scrollToDiagnosisForm}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            className="bg-[#f16f21] hover:bg-[#e05a10] text-white font-bold py-4 px-10 rounded-full text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
             無料診断を始める
           </button>
           <Link
             href="/contact"
-            className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-bold py-4 px-10 rounded-full text-base transition-all duration-300"
+            className="border-2 border-[#f16f21] text-[#f16f21] hover:bg-[#f16f21] hover:text-white font-bold py-4 px-10 rounded-full text-base transition-all duration-300"
           >
             お電話で相談する
           </Link>
@@ -44,7 +44,7 @@ const CTASection = () => {
         {/* 営業時間情報 */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm text-slate-600 animate-fadeIn" style={{animationDelay: '0.3s'}}>
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-5 h-5 text-[#f16f21]" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
             </svg>
             <span>受付時間：平日 9:00～18:00</span>

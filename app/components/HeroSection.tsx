@@ -9,160 +9,140 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative py-20 px-4 overflow-hidden">
+    <section className="relative py-12 md:py-20 px-4 overflow-hidden">
       {/* 背景画像 */}
       <div className="absolute inset-0">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{backgroundImage: 'url(/hero-bg.jpg)'}}
         />
-        {/* 黒いオーバーレイでぼかし効果 */}
-        <div className="absolute inset-0 bg-black/40"></div>
-        {/* グラデーションオーバーレイ */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent"></div>
+        {/* オーバーレイ */}
+        <div className="absolute inset-0 bg-black/50"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* メインビジュアル - 重なり合うレイアウト */}
-        <div className="relative mb-16 md:mb-32 min-h-[500px] md:min-h-[700px] flex flex-col md:flex-row items-center justify-between gap-8 md:gap-16">
-          {/* 左側: サブキャッチコピーと統計情報 */}
-          <div className="flex-1 w-full animate-fadeIn" style={{animationDelay: '0.2s'}}>
+        {/* メインビジュアル */}
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+          {/* 左側: キャッチコピーと統計情報 */}
+          <div className="flex-1 w-full lg:w-1/2 animate-fadeIn" style={{animationDelay: '0.2s'}}>
+            {/* メインキャッチコピー */}
+            <div className="mb-6 md:mb-8">
+              <h1 className="font-serif text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight drop-shadow-lg mb-4">
+                信頼と安心の<br className="hidden sm:block"/>全国ネットワーク
+              </h1>
+              <p className="text-lg md:text-xl lg:text-2xl text-white/90 font-medium drop-shadow-md">
+                比較で納得、直営で安心
+              </p>
+            </div>
+
             {/* サブキャッチコピー */}
-            <div className="mb-8 md:mb-16">
-              <p className="text-lg md:text-xl lg:text-2xl text-white leading-relaxed font-light drop-shadow-lg">
-                日本全国<span className="inline-block mx-1 md:mx-2 px-3 py-1 md:px-4 md:py-2 bg-white text-slate-900 font-bold text-xl md:text-2xl lg:text-3xl rounded-lg md:rounded-xl shadow-xl">3,500社</span>の厳選された職人が<br className="hidden md:block"/>
-                あなたの大切な住まいを最高の品質で守ります
+            <div className="mb-6 md:mb-10">
+              <p className="text-base md:text-lg text-white/80 leading-relaxed">
+                日本全国<span className="inline-block mx-1 px-2 py-1 bg-[#f16f21] text-white font-bold rounded">5,500社</span>以上の<br className="hidden sm:block"/>
+                優良施工店をご紹介いたします
               </p>
             </div>
 
             {/* 統計情報 */}
-            <div className="bg-white/90 backdrop-blur-sm border border-white/60 rounded-2xl md:rounded-3xl p-6 md:p-8 modern-shadow-lg w-full md:inline-block">
-              <div className="flex items-center justify-around gap-6 md:gap-12">
+            <div className="bg-white rounded-xl p-4 md:p-6 shadow-lg inline-block">
+              <div className="flex items-center gap-6 md:gap-10">
                 <div className="text-center">
-                  <p className="text-xs text-slate-600 tracking-wider mb-2 md:mb-3 font-semibold uppercase">利用者満足度</p>
-                  <p className="font-sans text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent" style={{WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
-                    97<span className="text-2xl md:text-3xl lg:text-4xl">%</span>
+                  <p className="text-xs text-gray-500 mb-1">利用者満足度</p>
+                  <p className="text-3xl md:text-4xl font-bold text-[#f16f21]">
+                    97<span className="text-xl">%</span>
                   </p>
                 </div>
 
-                <div className="w-px h-16 md:h-20 bg-gradient-to-b from-transparent via-slate-300 to-transparent"></div>
+                <div className="w-px h-12 bg-gray-300"></div>
 
                 <div className="text-center">
-                  <p className="text-xs text-slate-600 tracking-wider mb-2 md:mb-3 font-semibold uppercase">提携業者数</p>
-                  <p className="font-sans text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent" style={{WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
-                    3,500<span className="text-xl md:text-2xl lg:text-3xl">社</span>
+                  <p className="text-xs text-gray-500 mb-1">提携業者数</p>
+                  <p className="text-3xl md:text-4xl font-bold text-[#f16f21]">
+                    5,500<span className="text-lg">社</span>
+                  </p>
+                </div>
+
+                <div className="w-px h-12 bg-gray-300"></div>
+
+                <div className="text-center">
+                  <p className="text-xs text-gray-500 mb-1">ご紹介実績</p>
+                  <p className="text-3xl md:text-4xl font-bold text-[#f16f21]">
+                    10万<span className="text-lg">件</span>
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 中央寄り: 縦書きタイトル */}
-          <div className="animate-fadeInUp mr-0 md:mr-16 lg:mr-32">
-            <div className="flex items-start gap-4 md:gap-6 lg:gap-8">
-              {/* 縦書きタイトル - すべて解決します */}
-              <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white drop-shadow-2xl" style={{writingMode: 'vertical-rl', textOrientation: 'upright', letterSpacing: '0.2em', textShadow: '0 4px 20px rgba(0,0,0,0.5)'}}>
-                すべて解決します
-              </h1>
-
-              {/* 縦書きタイトル - 外壁のお悩み */}
-              <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white drop-shadow-2xl" style={{writingMode: 'vertical-rl', textOrientation: 'upright', letterSpacing: '0.2em', textShadow: '0 4px 20px rgba(0,0,0,0.5)'}}>
-                外壁のお悩み
-              </h1>
-            </div>
-          </div>
-
-        </div>
-
-
-        {/* 3つの特徴 - シンプルでヒューマンなデザイン */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16 md:mb-32">
-          {/* カード1 */}
-          <div className="group text-center relative animate-fadeIn" style={{animationDelay: '0.8s'}}>
-            <div className="relative bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl p-10 transition-all duration-300 shadow-md hover:shadow-lg hover:bg-white/60">
-              {/* アイコン */}
-              <div className="w-14 h-14 mx-auto mb-6 flex items-center justify-center">
-                <img src="/icons/home.jpg" alt="料金システム" className="w-14 h-14 object-cover rounded-lg" />
+          {/* 右側: 簡易診断フォーム */}
+          <div className="w-full lg:w-auto animate-fadeIn" style={{animationDelay: '0.4s'}}>
+            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-2xl max-w-md mx-auto lg:mx-0">
+              {/* フォームヘッダー */}
+              <div className="text-center mb-6">
+                <div className="inline-block bg-[#f16f21] text-white text-sm font-bold px-4 py-1 rounded-full mb-3">
+                  簡単60秒
+                </div>
+                <h2 className="text-xl md:text-2xl font-bold text-gray-800">
+                  無料相場診断
+                </h2>
+                <p className="text-sm text-gray-600 mt-2">
+                  お電話での相談も受付中
+                </p>
               </div>
 
-              {/* タイトル */}
-              <h3 className="text-xl font-bold text-slate-900 mb-3">
-                完全透明な
-                <br/>
-                料金システム
-              </h3>
+              {/* CTAボタン */}
+              <button
+                onClick={scrollToDiagnosisForm}
+                className="w-full bg-[#f16f21] hover:bg-[#e05a10] text-white font-bold py-4 px-6 rounded-lg text-lg transition-all duration-300 shadow-lg hover:shadow-xl mb-4"
+              >
+                今すぐ相場を診断する
+              </button>
 
-              {/* 説明文 */}
-              <p className="text-sm text-slate-800 leading-relaxed">
-                追加費用は一切なし。
-                <br/>
-                明瞭会計で安心の品質をお約束
-              </p>
-            </div>
-          </div>
-
-          {/* カード2 */}
-          <div className="group text-center relative animate-fadeIn" style={{animationDelay: '0.9s'}}>
-            <div className="relative bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl p-10 transition-all duration-300 shadow-md hover:shadow-lg hover:bg-white/60">
-              {/* アイコン */}
-              <div className="w-14 h-14 mx-auto mb-6 flex items-center justify-center">
-                <img src="/icons/prof.jpg" alt="プロフェッショナル" className="w-14 h-14 object-cover rounded-lg" />
+              {/* 電話番号 */}
+              <div className="text-center border-t border-gray-200 pt-4">
+                <p className="text-xs text-gray-500 mb-1">お電話でのご相談</p>
+                <a href="tel:0120-945-990" className="text-xl font-bold text-[#f16f21] hover:text-[#e05a10] transition-colors">
+                  0120-945-990
+                </a>
+                <p className="text-xs text-gray-500 mt-1">受付時間 9:00〜18:00（土日祝除く）</p>
               </div>
-
-              {/* タイトル */}
-              <h3 className="text-xl font-bold text-slate-900 mb-3">
-                厳選された
-                <br/>
-                プロフェッショナル
-              </h3>
-
-              {/* 説明文 */}
-              <p className="text-sm text-slate-800 leading-relaxed">
-                豊富な実績と確かな技術を持つ
-                <br/>
-                一流職人のみをご紹介
-              </p>
-            </div>
-          </div>
-
-          {/* カード3 */}
-          <div className="group text-center relative animate-fadeIn" style={{animationDelay: '1s'}}>
-            <div className="relative bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl p-10 transition-all duration-300 shadow-md hover:shadow-lg hover:bg-white/60">
-              {/* アイコン */}
-              <div className="w-14 h-14 mx-auto mb-6 flex items-center justify-center">
-                <img src="/icons/bookmark.jpg" alt="アフターケア" className="w-14 h-14 object-cover rounded-lg" />
-              </div>
-
-              {/* タイトル */}
-              <h3 className="text-xl font-bold text-slate-900 mb-3">
-                万全の
-                <br/>
-                アフターケア体制
-              </h3>
-
-              {/* 説明文 */}
-              <p className="text-sm text-slate-800 leading-relaxed">
-                施工後も末永く。
-                <br/>
-                充実の保証とサポートで安心
-              </p>
             </div>
           </div>
         </div>
 
-        {/* 診断フォームボックス - シンプルなデザイン */}
-        <div className="max-w-3xl mx-auto animate-fadeIn" style={{animationDelay: '1.2s'}}>
-          <div className="relative bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl p-6 md:p-8 lg:p-10 shadow-lg hover:shadow-xl transition-all duration-300 text-center">
-            <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-5">
-              今すぐ外壁の状態を<span className="text-blue-600">チェック</span>
-            </h3>
+        {/* 3つの特徴 */}
+        <div className="grid md:grid-cols-3 gap-4 md:gap-6 mt-12 md:mt-16">
+          {/* 特徴1 */}
+          <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 text-center shadow-md hover:shadow-lg transition-all duration-300 animate-fadeIn" style={{animationDelay: '0.6s'}}>
+            <div className="w-16 h-16 mx-auto mb-4 bg-[#f16f21]/10 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-[#f16f21]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">専門アドバイザー在籍</h3>
+            <p className="text-sm text-gray-600">外壁のプロが最適な施工店をご提案</p>
+          </div>
 
-            <button
-              onClick={scrollToDiagnosisForm}
-              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 md:py-3.5 px-8 md:px-12 rounded-full text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-            >
-              無料診断を始める
-            </button>
+          {/* 特徴2 */}
+          <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 text-center shadow-md hover:shadow-lg transition-all duration-300 animate-fadeIn" style={{animationDelay: '0.7s'}}>
+            <div className="w-16 h-16 mx-auto mb-4 bg-[#f16f21]/10 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-[#f16f21]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">優良施工店5,500社以上</h3>
+            <p className="text-sm text-gray-600">厳選された信頼できる業者のみ</p>
+          </div>
+
+          {/* 特徴3 */}
+          <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 text-center shadow-md hover:shadow-lg transition-all duration-300 animate-fadeIn" style={{animationDelay: '0.8s'}}>
+            <div className="w-16 h-16 mx-auto mb-4 bg-[#f16f21]/10 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-[#f16f21]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">複数社の見積り比較</h3>
+            <p className="text-sm text-gray-600">最大3社から無料でお見積り</p>
           </div>
         </div>
       </div>

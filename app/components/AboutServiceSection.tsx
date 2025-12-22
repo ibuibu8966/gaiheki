@@ -28,8 +28,8 @@ const AboutServiceSection = () => {
                 一般的な見積サイトでは、受注が決まる前の"紹介"だけで、施工会社→紹介元へ数万円〜十数万円の手数料が発生し、見積りに価格転嫁されがち。私たちはこの前提を見直しています。
               </p>
               <div className="space-y-1.5 md:space-y-2">
-                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-blue-600">だから安心：</span>手数料都合の押し込みが起きにくく、納得いくまで比較できる。</p>
-                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-blue-600">だから安い：</span>余計な紹介コストが乗りにくく、見積りが適正価格に近づく。</p>
+                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-[#f16f21]">だから安心：</span>手数料都合の押し込みが起きにくく、納得いくまで比較できる。</p>
+                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-[#f16f21]">だから安い：</span>余計な紹介コストが乗りにくく、見積りが適正価格に近づく。</p>
               </div>
             </div>
 
@@ -40,8 +40,8 @@ const AboutServiceSection = () => {
                 何社も通して仕事が下ろされると、途中で中間マージンが差し引かれ、いわゆる<span className="font-bold">"間を抜かれる"</span>状態に。私たちは<span className="font-bold">一次施工店と直接</span>つながる前提で、価格と責任の見通しを良くします。
               </p>
               <div className="space-y-1.5 md:space-y-2">
-                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-blue-600">だから安心：</span>誰が工事するか、責任の所在と品質が明確。</p>
-                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-blue-600">だから安い：</span>中間マージンを最小化し、同じ予算でも材料・手間に再配分できる。</p>
+                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-[#f16f21]">だから安心：</span>誰が工事するか、責任の所在と品質が明確。</p>
+                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-[#f16f21]">だから安い：</span>中間マージンを最小化し、同じ予算でも材料・手間に再配分できる。</p>
               </div>
             </div>
 
@@ -52,8 +52,8 @@ const AboutServiceSection = () => {
                 条件入力は1回。下地補修、塗料グレード、足場、保証などを同一フォーマットで見比べられます。
               </p>
               <div className="space-y-1.5 md:space-y-2">
-                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-blue-600">だから安心：</span><span className="font-bold">"なぜ安い／高い"</span>が内訳で分かり、納得して選べる。</p>
-                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-blue-600">だから安い：</span>同一条件の健全な競争で、相場から外れた高値を避けやすい。</p>
+                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-[#f16f21]">だから安心：</span><span className="font-bold">"なぜ安い／高い"</span>が内訳で分かり、納得して選べる。</p>
+                <p className="text-xs md:text-sm text-slate-800"><span className="font-bold text-[#f16f21]">だから安い：</span>同一条件の健全な競争で、相場から外れた高値を避けやすい。</p>
               </div>
             </div>
           </div>
