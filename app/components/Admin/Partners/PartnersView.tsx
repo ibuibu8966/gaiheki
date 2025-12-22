@@ -402,7 +402,7 @@ const PartnersView = () => {
           setIsFormModalOpen(false);
           setEditingPartner(null);
         }}
-        onSubmit={editingPartner ? handleUpdatePartner : handleCreatePartner}
+        onSubmit={editingPartner?.id ? handleUpdatePartner : handleCreatePartner}
         partner={editingPartner}
       />
 
