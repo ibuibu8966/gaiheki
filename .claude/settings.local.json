@@ -34,7 +34,10 @@
       "Bash(npm uninstall:*)",
       "Bash(npx prisma db execute:*)",
       "Bash(timeout 10 powershell:*)",
-      "Bash(python crop_icons_centered.py:*)"
+      "Bash(python crop_icons_centered.py:*)",
+      "Bash(npm info:*)",
+      "Bash(npm update:*)",
+      "Bash(npm ls:*)"
     ],
     "deny": [],
     "ask": []
